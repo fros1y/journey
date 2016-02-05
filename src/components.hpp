@@ -1,6 +1,9 @@
 #ifndef _components_HPP
 #define _components_HPP
 
+#include <memory>
+#include <string>
+
 typedef char Glyph;
 
 struct Render {

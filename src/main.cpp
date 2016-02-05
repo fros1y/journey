@@ -4,20 +4,15 @@
 #include <entityx/entityx.h>
 #include <libtcod.hpp>
 
+#include "AttackSystem.hpp"
+#include "Display.hpp"
+#include "DisplaySystem.hpp"
+#include "HealthSystem.hpp"
+#include "Map.hpp"
+#include "MovementSystem.hpp"
+#include "World.hpp"
 #include "components.hpp"
 #include "events.hpp"
-
-#include "Display.hpp"
-
-#include "DisplaySystem.hpp"
-
-#include "HealthSystem.hpp"
-
-#include "MovementSystem.hpp"
-
-#include "AttackSystem.hpp"
-
-#include "World.hpp"
 
 void gameLoop(std::shared_ptr<World> world, std::shared_ptr<Display> display) {
   int d_x = 0;

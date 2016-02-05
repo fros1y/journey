@@ -1,34 +1,26 @@
 #ifndef _DISPLAYSYSTEM_HPP
 #define _DISPLAYSYSTEM_HPP
 
-struct World;
+#include "World.hpp"
+#include "events.hpp"
+#include <entityx/entityx.h>
+#include <memory>
+#include <string>
 
 struct DisplaySystem : entityx::System<DisplaySystem>,
-                       public entityx::Receiver<MovementSystem> {
+                       public entityx::Receiver<DisplaySystem> {
   std::shared_ptr<Display> display;
   std::shared_ptr<World> world;
 
   DisplaySystem(std::shared_ptr<Display> display, std::shared_ptr<World> world)
       : display(display), world(world) {}
 
-  void configure(entityx::EventManager &event_manager) override {
-    event_manager.subscribe<Message>(*this);
-  }
+  void configure(entityx::EventManager &event_manager) override;
 
   void update(entityx::EntityManager &es, entityx::EventManager &events,
-              entityx::TimeDelta dt) override {
-    display->clear();
+              entityx::TimeDelta dt) override;
 
-    display->statusBar(world);
-
-    es.each<Position, Render>(
-        [this](entityx::Entity entity, Position &position, Render &render) {
-          display->drawEntity(position.x, position.y, render.glyph);
-        });
-    display->render();
-  }
-
-  void receive(const Message &mesg) { printf("%s\n", mesg.text.c_str()); }
+  void receive(const Message &mesg);
 };
 
 #endif
