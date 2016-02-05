@@ -8,9 +8,15 @@
 #include "events.hpp"
 
 #include "Display.hpp"
+
 #include "DisplaySystem.hpp"
+
 #include "HealthSystem.hpp"
+
 #include "MovementSystem.hpp"
+
+#include "AttackSystem.hpp"
+
 #include "World.hpp"
 
 void gameLoop(std::shared_ptr<World> world, std::shared_ptr<Display> display) {

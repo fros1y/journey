@@ -14,9 +14,27 @@ struct Position {
 };
 
 struct Health {
-  Health(int maxHP = 100, int currHP = 100) : maxHP(maxHP), currHP(currHP) {}
+  Health(int maxHP, int currHP) : maxHP(maxHP), currHP(currHP) {}
+  Health(int HP) : Health(HP, HP) {}
   int maxHP;
   int currHP;
+};
+
+struct NPC {
+  std::string name;
+  bool unique;
+  NPC(std::string name, bool unique = false) : name(name), unique(unique) {}
+};
+
+struct Obstruction {
+  bool obstructs;
+  bool obstructsAbove;
+  bool obstructsBelow;
+
+  Obstruction(bool obstructs = true, bool obstructsAbove = true,
+              bool obstructsBelow = true)
+      : obstructs(obstructs), obstructsAbove(obstructsAbove),
+        obstructsBelow(obstructsBelow) {}
 };
 
 #endif
