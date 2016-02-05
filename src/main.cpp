@@ -22,9 +22,6 @@ void gameLoop(std::shared_ptr<World> world, std::shared_ptr<Display> display) {
 
     TCOD_key_t key = TCODConsole::checkForKeypress();
     switch (key.vk) {
-    case TCODK_NONE:
-      world->updateDisplayOnly();
-      continue;
     case TCODK_UP:
       d_y = -1;
       break;
@@ -38,6 +35,8 @@ void gameLoop(std::shared_ptr<World> world, std::shared_ptr<Display> display) {
       d_x = 1;
       break;
     default:
+      world->updateDisplayOnly();
+      continue;
       break;
     }
 
