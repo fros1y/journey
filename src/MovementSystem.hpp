@@ -13,7 +13,7 @@ struct MovementSystem : entityx::System<MovementSystem>,
   }
 
   void receive(const Movement &move) {
-    auto target = const_cast<entityx::Entity &>(move.target);
+    auto target = move.target;
 
     entityx::ComponentHandle<Position> position = target.component<Position>();
     position->x += move.d_x;

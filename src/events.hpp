@@ -2,7 +2,7 @@
 #define _EVENTS_HPP
 
 struct Movement {
-  entityx::Entity target;
+  mutable entityx::Entity target;
   int d_x;
   int d_y;
 
