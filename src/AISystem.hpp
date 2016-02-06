@@ -19,6 +19,20 @@ struct AISystem : entityx::System<AISystem> {
 
   void randomMotion(entityx::Entity e);
   void zombieMotion(entityx::Entity e);
+  void basicMotion(entityx::Entity e);
+
+  bool failMoraleCheck();
+  bool canMoveAway();
+  void moveAway();
+  bool hasRangedAttack();
+  bool canMoveToward();
+  bool decideToCharge();
+  void moveToward();
+  void rangedAttack();
+  bool canAttack();
+  bool decideToRetreat();
+  void attack();
+  void wait();
 };
 
 #endif

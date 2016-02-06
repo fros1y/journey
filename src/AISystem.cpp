@@ -6,12 +6,60 @@ void AISystem::update(entityx::EntityManager &es, entityx::EventManager &events,
       [this](entityx::Entity entity, NPC &npc) { zombieMotion(entity); });
 }
 
-void AISystem::randomMotion(entityx::Entity e) {
-  int d_x = world->rnd->getInt(-1, 1);
-  int d_y = world->rnd->getInt(-1, 1);
-  world->events.emit<Movement>(e, d_x, d_y);
+bool AISystem::failMoraleCheck() { return false; }
+
+bool AISystem::canMoveAway() { return false; }
+
+void AISystem::moveAway() {}
+
+bool AISystem::hasRangedAttack() { return false; }
+
+bool AISystem::canMoveToward() { return false; }
+
+bool AISystem::decideToCharge() { return false; }
+
+void AISystem::moveToward() {}
+
+void AISystem::rangedAttack() {}
+
+bool AISystem::canAttack() { return false; }
+
+bool AISystem::decideToRetreat() { return false; }
+
+void AISystem::attack() {}
+
+void AISystem::wait() {}
+
+void AISystem::basicMotion(entityx::Entity e) {
+  if (failMoraleCheck() && canMoveAway()) {
+    moveAway();
+  } else if (hasRangedAttack() && canMoveToward()) {
+    if (decideToCharge()) {
+      moveToward();
+    } else {
+      rangedAttack();
+    }
+  } else if (canAttack() && hasRangedAttack() && canMoveAway()) {
+    if (decideToRetreat()) {
+      moveAway();
+    } else {
+      attack();
+    }
+  } else if (canAttack()) {
+    attack();
+  } else if (canMoveToward()) {
+    moveToward();
+  } else {
+    wait();
+  }
 }
 
+// void AISystem::randomMotion(entityx::Entity e) {
+//   int d_x = world->rnd->getInt(-1, 1);
+//   int d_y = world->rnd->getInt(-1, 1);
+//   world->events.emit<Movement>(e, d_x, d_y);
+// }
+//
 void AISystem::zombieMotion(entityx::Entity e) {
   int d_x = 0;
   int d_y = 0;
