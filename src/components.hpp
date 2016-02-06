@@ -6,6 +6,10 @@
 
 typedef char Glyph;
 
+struct Attackable {
+  Attackable() {}
+};
+
 struct Render {
   Render(Glyph glyph) : glyph(glyph) {}
   Glyph glyph;

@@ -9,19 +9,19 @@ bool obstructsTest(entityx::Entity e) {
   }
 }
 
-bool NPCTest(entityx::Entity e) {
-  entityx::ComponentHandle<NPC> npc = e.component<NPC>();
-  if (npc) {
+bool AttackableTest(entityx::Entity e) {
+  entityx::ComponentHandle<Attackable> attackable = e.component<Attackable>();
+  if (attackable) {
     return true;
   } else {
     return false;
   }
 }
 
-int npc_filter(std::vector<entityx::Entity> &results,
-               std::vector<entityx::Entity> input) {
+int attack_filter(std::vector<entityx::Entity> &results,
+                  std::vector<entityx::Entity> input) {
   std::copy_if(input.begin(), input.end(), std::back_inserter(results),
-               [](entityx::Entity e) { return NPCTest(e); });
+               [](entityx::Entity e) { return AttackableTest(e); });
   return results.size();
 }
 
@@ -48,7 +48,7 @@ void MovementSystem::receive(const Movement &move) {
   bool obstruction = false;
   if (world->entitiesAt(entitiesAtDest, destination_x, destination_y)) {
 
-    if (npc_filter(NPCsAtDest, entitiesAtDest) > 0) {
+    if (attack_filter(NPCsAtDest, entitiesAtDest) > 0) {
       world->events.emit<Attack>(mover, NPCsAtDest[0]);
       obstruction = true;
     } else if (std::any_of(

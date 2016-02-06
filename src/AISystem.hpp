@@ -18,6 +18,7 @@ struct AISystem : entityx::System<AISystem> {
               entityx::TimeDelta dt) override;
 
   void randomMotion(entityx::Entity e);
+  void zombieMotion(entityx::Entity e);
 };
 
 #endif

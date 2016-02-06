@@ -18,6 +18,7 @@ void World::generateMap() {
   enemy.assign<Render>('r');
   enemy.assign<NPC>("rat");
   enemy.assign<Health>(5);
+  enemy.assign<Attackable>();
 }
 
 void World::setupPlayer() {
@@ -26,6 +27,7 @@ void World::setupPlayer() {
   player.assign<Health>(100);
   player.assign<Obstruction>();
   player.assign<Render>('@');
+  player.assign<Attackable>();
 }
 
 void World::startSystems(std::shared_ptr<Display> d) {
