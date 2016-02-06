@@ -17,21 +17,25 @@ char Map::get(int x, int y) { return tiles[width * y + x]; }
 void Map::set(int x, int y, char v) { tiles[width * y + x] = v; }
 
 void Map::floodFill(int x, int y, char v) {
-  if (get(x, y) == '#' or get(x, y) == v) {
+  if (get(x, y) == '#') {
     return;
   }
-  if (y > 0) {
+  if (y > 0)
     floodFill(x, y - 1, v);
-  }
-  if (x > 0) {
+  if (x > 0)
     floodFill(x - 1, y, v);
-  }
-  if (x < width - 1) {
+  if (x > 0 && y > 0)
+    floodFill(x - 1, y - 1, v);
+  if (x < width - 1)
     floodFill(x + 1, y, v);
-  }
-  if (y < height - 1) {
+  if (y < height - 1)
     floodFill(x, y + 1, v);
-  }
+  if (x < width - 1 && y < height - 1)
+    floodFill(x + 1, y + 1, v);
+  if (x > 0 && y < height - 1)
+    floodFill(x - 1, y + 1, v);
+  if (x < width - 1 && y > 0)
+    floodFill(x + 1, y - 1, v);
 }
 
 void Map::toEntities() {
