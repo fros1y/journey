@@ -6,6 +6,10 @@
 
 typedef char Glyph;
 
+struct MapElement {
+  MapElement() {}
+};
+
 struct Attackable {
   Attackable() {}
 };
