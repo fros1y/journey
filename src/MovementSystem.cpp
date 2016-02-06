@@ -31,6 +31,8 @@ void MovementSystem::configure(entityx::EventManager &event_manager) {
 
 void MovementSystem::receive(const Movement &move) {
   auto mover = move.target;
+  if (move.d_x == 0 && move.d_y == 0)
+    return;
 
   entityx::ComponentHandle<Position> position = mover.component<Position>();
   if (!position) {

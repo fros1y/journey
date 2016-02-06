@@ -7,9 +7,11 @@ struct Map;
 #include "Display.hpp"
 #include "Map.hpp"
 #include <entityx/entityx.h>
+#include <libtcod.hpp>
 #include <memory>
 #include <string>
 
+#include "AISystem.hpp"
 #include "AttackSystem.hpp"
 #include "Display.hpp"
 #include "DisplaySystem.hpp"
@@ -27,6 +29,8 @@ struct World : std::enable_shared_from_this<World> {
   entityx::EventManager &events = ECS.events;
   entityx::EntityManager &entities = ECS.entities;
   std::shared_ptr<Map> currLevel;
+
+  TCODRandom *rnd;
 
   World() {}
 

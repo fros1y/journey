@@ -1,6 +1,7 @@
 #include "World.hpp"
 
 void World::init(std::shared_ptr<Display> d) {
+  rnd = new TCODRandom();
   setupPlayer();
   generateMap();
   startSystems(d);
@@ -32,6 +33,7 @@ void World::startSystems(std::shared_ptr<Display> d) {
   ECS.systems.add<DisplaySystem>(d, shared_from_this());
   ECS.systems.add<MovementSystem>(shared_from_this());
   ECS.systems.add<AttackSystem>(shared_from_this());
+  ECS.systems.add<AISystem>(shared_from_this());
   ECS.systems.configure();
 }
 
