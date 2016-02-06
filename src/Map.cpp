@@ -7,13 +7,56 @@ void Map::makeBlock(int x, int y) {
   block.assign<Render>('#');
 }
 
+void Map::makeFloor(int x, int y) {
+  auto floor = world->entities.create();
+  floor.assign<Position>(x, y);
+  floor.assign<Render>('.');
+}
+
+char Map::get(int x, int y) { return tiles[width * y + x]; }
+void Map::set(int x, int y, char v) { tiles[width * y + x] = v; }
+
+void Map::floodFill(int x, int y, char v) {
+  if (get(x, y) == '#' or get(x, y) == v) {
+    return;
+  }
+  if (y > 0) {
+    floodFill(x, y - 1, v);
+  }
+  if (x > 0) {
+    floodFill(x - 1, y, v);
+  }
+  if (x < width - 1) {
+    floodFill(x + 1, y, v);
+  }
+  if (y < height - 1) {
+    floodFill(x, y + 1, v);
+  }
+}
+
+void Map::toEntities() {
+  for (auto i = 0; i < width; ++i) {
+    for (auto j = 0; j < height; ++j) {
+      if (get(i, j) == '#') {
+        makeBlock(i, j);
+      } else {
+        makeFloor(i, j);
+      }
+    }
+  }
+}
+
+void Map::generateCavern() {}
+
 void Map::generateArena() {
   for (auto i = 0; i < height; ++i) {
     for (auto j = 0; j < width; ++j) {
       if (i == 0 || j == 0 || i == height - 1 || j == width - 1 ||
           (i % 7 == 0 && j % 7 == 0)) {
-        makeBlock(j, i);
+        set(j, i, '#');
       }
     }
   }
+  floodFill(1, 1, '.');
+  toEntities();
 }

@@ -21,6 +21,8 @@ void DisplaySystem::update(entityx::EntityManager &es,
       [this](entityx::Entity entity, Position &position, Render &render) {
         display->drawEntity(position.x, position.y, render.glyph);
       });
+
+  display->drawEntity(position->x, position->y, '@');
   display->render();
 }
 
