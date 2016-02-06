@@ -38,6 +38,22 @@ void Map::floodFill(int x, int y, char v) {
     floodFill(x + 1, y - 1, v);
 }
 
+void Map::addMonsters() {
+  for (auto i = 0; i < 5; ++i) {
+    int m_x, m_y;
+    m_x = world->rnd->getInt(0, width);
+    m_y = world->rnd->getInt(0, height);
+
+    auto enemy = world->entities.create();
+    enemy.assign<Position>(m_x, m_y);
+    enemy.assign<Obstruction>(true, false);
+    enemy.assign<Render>('r');
+    enemy.assign<NPC>("rat");
+    enemy.assign<Health>(5);
+    enemy.assign<Attackable>();
+  }
+}
+
 void Map::toEntities() {
   for (auto i = 0; i < width; ++i) {
     for (auto j = 0; j < height; ++j) {
@@ -63,4 +79,5 @@ void Map::generateArena() {
   }
   floodFill(1, 1, '.');
   toEntities();
+  addMonsters();
 }

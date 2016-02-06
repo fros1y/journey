@@ -27,5 +27,7 @@ struct Map {
 
   void generateArena();
   void generateCavern();
+
+  void addMonsters();
 };
 #endif

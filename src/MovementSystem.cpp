@@ -49,7 +49,9 @@ void MovementSystem::receive(const Movement &move) {
   if (world->entitiesAt(entitiesAtDest, destination_x, destination_y)) {
 
     if (attack_filter(NPCsAtDest, entitiesAtDest) > 0) {
-      world->events.emit<Attack>(mover, NPCsAtDest[0]);
+      if (!mover.component<NPC>() || !NPCsAtDest[0].component<NPC>())
+        // monsters don't kill monsters
+        world->events.emit<Attack>(mover, NPCsAtDest[0]);
       obstruction = true;
     } else if (std::any_of(
                    entitiesAtDest.cbegin(), entitiesAtDest.cend(),

@@ -11,14 +11,6 @@ void World::generateMap() {
 
   currLevel = std::make_shared<Map>(shared_from_this(), 100, 100);
   currLevel->generateArena();
-
-  auto enemy = ECS.entities.create();
-  enemy.assign<Position>(15, 5);
-  enemy.assign<Obstruction>(true, false);
-  enemy.assign<Render>('r');
-  enemy.assign<NPC>("rat");
-  enemy.assign<Health>(5);
-  enemy.assign<Attackable>();
 }
 
 void World::setupPlayer() {
