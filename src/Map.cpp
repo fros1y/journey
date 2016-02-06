@@ -8,12 +8,12 @@ void Map::makeBlock(int x, int y) {
 }
 
 void Map::generateArena() {
-  for (auto i = 0; i < height; i++) {
-    makeBlock(i, 0);
-    makeBlock(i, width - 1);
-  }
-  for (auto i = 1; i < width - 1; i++) {
-    makeBlock(0, i);
-    makeBlock(height - 1, i);
+  for (auto i = 0; i < height; ++i) {
+    for (auto j = 0; j < width; ++j) {
+      if (i == 0 || j == 0 || i == height - 1 || j == width - 1 ||
+          (i % 7 == 0 && j % 7 == 0)) {
+        makeBlock(j, i);
+      }
+    }
   }
 }

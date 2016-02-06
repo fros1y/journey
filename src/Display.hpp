@@ -19,7 +19,7 @@ struct Display {
   TCODConsole *levelView;
   TCODConsole *statusBarView;
 
-  Display(int width = 40, int height = 20, int camera_x = 0, int camera_y = 0)
+  Display(int width = 80, int height = 40, int camera_x = 0, int camera_y = 0)
       : width(width), height(height), camera_x(camera_x), camera_y(camera_y) {}
 
   void init(void);

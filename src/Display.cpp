@@ -1,7 +1,12 @@
 #include "Display.hpp"
 
 void Display::init(void) {
-  TCODConsole::setCustomFont("bfont.png", TCOD_FONT_LAYOUT_ASCII_INROW, 16, 16);
+  // TCODConsole::setCustomFont("bfont.png", TCOD_FONT_LAYOUT_ASCII_INROW, 16,
+  // 16);
+  TCODConsole::setCustomFont(
+      "terminal8x14_gs_ro.png",
+      TCOD_FONT_TYPE_GRAYSCALE | TCOD_FONT_LAYOUT_ASCII_INROW, 16, 16);
+
   TCODConsole::initRoot(width, height, "Journey", false);
 
   levelView = new TCODConsole(width, height - 1);
@@ -16,12 +21,7 @@ void Display::clear() {
 void Display::drawEntity(int x, int y, Glyph g) {
   int sc_x = x - camera_x;
   int sc_y = y - camera_y;
-
-  if (sc_x < 0 or sc_y < 0 or sc_x > height or sc_x > width) {
-    return;
-  } else {
-    levelView->putChar(sc_x, sc_y, g);
-  }
+  levelView->putChar(sc_x, sc_y, g);
 }
 
 void Display::statusBar(std::shared_ptr<World> world) {
