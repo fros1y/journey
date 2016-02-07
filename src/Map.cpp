@@ -31,26 +31,32 @@ void Map::nextStepFrom(int x, int y, int &n_x, int &n_y) {
 bool Map::canReachFrom(int x, int y) { return d_map->canReachFrom(x, y); }
 
 void Map::calculateMaps() {
-  if (tcod_map)
-    delete tcod_map;
-  if (d_map)
-    d_map = nullptr;
+
+  // We only need to recalculate when the turn advances.
+  if (calculatedForTurn != world->turnCount) {
+    calculatedForTurn = world->turnCount;
+    if (tcod_map)
+      delete tcod_map;
+    if (d_map)
+      d_map = nullptr;
+  } else
+    return;
 
   tcod_map = new TCODMap(width, height);
   d_map = std::make_shared<DjikstraMap>(width, height);
-  world->entities.each<Position>(
-      [this](entityx::Entity entity, Position &position) {
-      entityx::ComponentHandle<Obstruction> ob = entity.component<Obstruction>();
-      bool walkable = true;
-      bool transparent = true;
+  world->entities.each<Position>([this](entityx::Entity entity,
+                                        Position &position) {
+    entityx::ComponentHandle<Obstruction> ob = entity.component<Obstruction>();
+    bool walkable = true;
+    bool transparent = true;
 
-      if(ob) {
-          walkable = !(ob->obstructs);
-          transparent = !(ob->blocksView);
-      }
-        tcod_map->setProperties(position.x, position.y, walkable, transparent);
-        d_map->setProperties(position.x, position.y, walkable);
-      });
+    if (ob) {
+      walkable = !(ob->obstructs);
+      transparent = !(ob->blocksView);
+    }
+    tcod_map->setProperties(position.x, position.y, walkable, transparent);
+    d_map->setProperties(position.x, position.y, walkable);
+  });
 }
 
 bool Map::obstructs(int x, int y) {

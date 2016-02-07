@@ -14,6 +14,8 @@ struct Map {
   int width;
   int height;
 
+  int calculatedForTurn;
+
   TCODMap *tcod_map = nullptr;
   std::shared_ptr<DjikstraMap> d_map;
 
@@ -27,7 +29,7 @@ struct Map {
   bool populated(int x, int y);
 
   Map(std::shared_ptr<World> world, int width, int height)
-      : world(world), width(width), height(height), tiles(width * height) {}
+      : world(world), width(width), height(height), calculatedForTurn(-1), tiles(width * height) {}
 
   void makeBlock(int x, int y);
   void makeFloor(int x, int y);
