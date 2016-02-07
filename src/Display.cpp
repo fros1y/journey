@@ -29,8 +29,12 @@ void Display::drawEntity(int x, int y, Glyph g, bool lit) {
 
 void Display::statusBar(std::shared_ptr<World> world) {
   entityx::ComponentHandle<Health> health = world->player.component<Health>();
-  statusBarView->print(0, 0, "%i/%i\tTurn: %i", health->currHP, health->maxHP,
-                       world->turnCount);
+  statusBarView->setDefaultBackground(TCODColor::lightestGrey);
+  statusBarView->setDefaultForeground(TCODColor::black);
+
+  statusBarView->print(0, 0, "%i/%i", health->currHP, health->maxHP);
+  statusBarView->printEx(width - 1, 0, statusBarView->getBackgroundFlag(),
+                         TCOD_RIGHT, "Turn: %i", world->turnCount);
 }
 
 void Display::render() {
