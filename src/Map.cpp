@@ -22,27 +22,29 @@ bool Map::populated(int x, int y) {
   return e == true;
 }
 
-void Map::makeTCODMap() {
+void Map::computeMovesTo(int d_x, int d_y) { d_map->calculate(d_x, d_y); }
+
+void Map::nextStepFrom(int x, int y, int &n_x, int &n_y) {
+  d_map->nextStepFrom(x, y, n_x, n_y);
+}
+
+bool Map::canReachFrom(int x, int y) { return d_map->canReachFrom(x, y); }
+
+void Map::calculateMaps() {
   if (tcod_map)
     delete tcod_map;
+  if (d_map)
+    d_map = nullptr;
+
   tcod_map = new TCODMap(width, height);
-  // for (auto i = 0; i < width; i++) {
-  //   for (auto j = 0; j < height; j++) {
-  //     bool walkable = !obstructs(i, j);
-  //     bool transparent = walkable;
-  //     tcod_map->setProperties(i, j, walkable, transparent);
-  //   }
-  // }
+  d_map = std::make_shared<DjikstraMap>(width, height);
   world->entities.each<MapElement, Position>(
       [this](entityx::Entity entity, MapElement &me, Position &position) {
         bool walkable = !entity.has_component<Obstruction>();
         bool transparent = walkable;
         tcod_map->setProperties(position.x, position.y, walkable, transparent);
+        d_map->setProperties(position.x, position.y, walkable);
       });
-
-  if (djikstra_map)
-    delete djikstra_map;
-  djikstra_map = new TCODDijkstra(tcod_map, 1.0f);
 }
 
 bool Map::obstructs(int x, int y) {

@@ -1,6 +1,7 @@
 #ifndef _MAP_HPP
 #define _MAP_HPP
 
+#include "DjikstraMap.hpp"
 #include "World.hpp"
 #include <entityx/entityx.h>
 #include <libtcod.hpp>
@@ -14,7 +15,7 @@ struct Map {
   int height;
 
   TCODMap *tcod_map = nullptr;
-  TCODDijkstra *djikstra_map = nullptr;
+  std::shared_ptr<DjikstraMap> d_map;
 
   std::vector<entityx::Entity> tiles;
 
@@ -36,6 +37,10 @@ struct Map {
 
   void addMonsters();
 
-  void makeTCODMap();
+  void calculateMaps();
+
+  void computeMovesTo(int d_x, int d_y);
+  void nextStepFrom(int x, int y, int &n_x, int &n_y);
+  bool canReachFrom(int x, int y);
 };
 #endif

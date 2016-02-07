@@ -8,8 +8,7 @@ void AISystem::update(entityx::EntityManager &es, entityx::EventManager &events,
   target_y = player_pos->y;
 
   es.each<NPC>([this](entityx::Entity entity, NPC &npc) {
-    world->currLevel->makeTCODMap();
-    world->currLevel->djikstra_map->compute(target_x, target_y);
+    world->currLevel->calculateMaps();
     basicMotion(entity);
   });
 }
@@ -24,17 +23,17 @@ bool AISystem::hasRangedAttack() { return false; }
 
 bool AISystem::canMoveToward(entityx::Entity e) {
   entityx::ComponentHandle<Position> AI_pos = e.component<Position>();
-  return world->currLevel->djikstra_map->setPath(AI_pos->x, AI_pos->y);
+  return world->currLevel->canReachFrom(AI_pos->x, AI_pos->y);
 }
 
 bool AISystem::decideToCharge() { return false; }
 
 void AISystem::moveToward(entityx::Entity e) {
   entityx::ComponentHandle<Position> AI_pos = e.component<Position>();
-  world->currLevel->djikstra_map->setPath(AI_pos->x, AI_pos->y);
-  world->currLevel->djikstra_map->reverse();
+  // world->currLevel->djikstra_map->setPath(AI_pos->x, AI_pos->y);
+  // world->currLevel->djikstra_map->reverse();
   int g_x, g_y;
-  world->currLevel->djikstra_map->walk(&g_x, &g_y);
+  world->currLevel->nextStepFrom(AI_pos->x, AI_pos->y, g_x, g_y);
   world->events.emit<Movement>(e, g_x - AI_pos->x, g_y - AI_pos->y);
 }
 
@@ -49,6 +48,7 @@ void AISystem::attack() {}
 void AISystem::wait() {}
 
 void AISystem::basicMotion(entityx::Entity e) {
+  world->currLevel->computeMovesTo(target_x, target_y);
   if (canMoveToward(e)) {
     moveToward(e);
   }

@@ -16,8 +16,8 @@ void DisplaySystem::update(entityx::EntityManager &es,
 
   display->camera_x = position->x - display->width / 2;
   display->camera_y = position->y - display->height / 2;
-  world->currLevel->makeTCODMap();
-  world->currLevel->tcod_map->computeFov(position->x, position->y, 3);
+  world->currLevel->calculateMaps();
+  world->currLevel->tcod_map->computeFov(position->x, position->y, 0);
   es.each<Position, Render>(
       [this](entityx::Entity entity, Position &position, Render &render) {
         if (world->currLevel->tcod_map->isInFov(position.x, position.y)) {
