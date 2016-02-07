@@ -34,13 +34,13 @@ void Map::calculateMaps() {
   if (calculatedForTurn != world->turnCount) {
     calculatedForTurn = world->turnCount;
     if (tcod_map)
-      delete tcod_map;
+      tcod_map = nullptr;
     if (d_map)
       d_map = nullptr;
   } else
     return;
 
-  tcod_map = new TCODMap(width, height);
+  tcod_map = std::make_shared<TCODMap>(width, height);
   d_map = std::make_shared<DjikstraMap>(width, height);
   world->entities.each<Position>([this](entityx::Entity entity,
                                         Position &position) {

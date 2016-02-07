@@ -16,7 +16,7 @@ struct Map {
 
   int calculatedForTurn;
 
-  TCODMap *tcod_map = nullptr;
+  std::shared_ptr<TCODMap> tcod_map;
   std::shared_ptr<DjikstraMap> d_map;
 
   std::vector<entityx::Entity> tiles;
