@@ -49,7 +49,7 @@ void MovementSystem::receive(const Movement &move) {
   if (world->entitiesAt(entitiesAtDest, destination_x, destination_y)) {
 
     if (attack_filter(NPCsAtDest, entitiesAtDest) > 0) {
-      if (!mover.component<NPC>() || !NPCsAtDest[0].component<NPC>())
+      if (!mover.component<AI>() || !NPCsAtDest[0].component<AI>())
         // monsters don't kill monsters
         world->events.emit<Attack>(mover, NPCsAtDest[0]);
       obstruction = true;

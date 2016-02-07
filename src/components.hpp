@@ -34,10 +34,10 @@ struct Health {
   int currHP;
 };
 
-struct NPC {
+struct AI {
   std::string name;
   bool unique;
-  NPC(std::string name, bool unique = false) : name(name), unique(unique) {}
+  AI(std::string name, bool unique = false) : name(name), unique(unique) {}
 };
 
 struct Obstruction {

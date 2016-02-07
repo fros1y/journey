@@ -102,7 +102,7 @@ void Map::addMonsters() {
     enemy.assign<Position>(m_x, m_y);
     enemy.assign<Obstruction>(true, false);
     enemy.assign<Render>('r');
-    enemy.assign<NPC>("rat");
+    enemy.assign<AI>("rat");
     enemy.assign<Health>(5);
     enemy.assign<Attackable>();
   }
