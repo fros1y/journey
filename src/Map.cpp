@@ -121,3 +121,9 @@ void Map::generateArena() {
   floodFill(1, 1, f);
   addMonsters();
 }
+
+void Map::computeFoVFrom(int x, int y, int range) {
+  tcod_map->computeFov(x, y, range);
+}
+
+bool Map::isInFoV(int x, int y) { return tcod_map->isInFov(x, y); }

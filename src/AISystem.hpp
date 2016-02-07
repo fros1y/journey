@@ -36,6 +36,7 @@ struct AISystem : entityx::System<AISystem> {
   bool decideToRetreat();
   void attack();
   void wait();
+  bool canSee(entityx::Entity e);
 };
 
 #endif

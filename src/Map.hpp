@@ -42,5 +42,8 @@ struct Map {
   void computeMovesTo(int d_x, int d_y);
   void nextStepFrom(int x, int y, int &n_x, int &n_y);
   bool canReachFrom(int x, int y);
+
+  void computeFoVFrom(int x, int y, int range);
+  bool isInFoV(int x, int y);
 };
 #endif

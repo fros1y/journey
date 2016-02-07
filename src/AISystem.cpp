@@ -7,10 +7,8 @@ void AISystem::update(entityx::EntityManager &es, entityx::EventManager &events,
   target_x = player_pos->x;
   target_y = player_pos->y;
 
-  es.each<NPC>([this](entityx::Entity entity, NPC &npc) {
-    world->currLevel->calculateMaps();
-    basicMotion(entity);
-  });
+  es.each<NPC>(
+      [this](entityx::Entity entity, NPC &npc) { basicMotion(entity); });
 }
 
 bool AISystem::failMoraleCheck() { return false; }
@@ -47,9 +45,18 @@ void AISystem::attack() {}
 
 void AISystem::wait() {}
 
+bool AISystem::canSee(entityx::Entity e) {
+  entityx::ComponentHandle<Position> entity_pos = e.component<Position>();
+  world->currLevel->computeFoVFrom(entity_pos->x, entity_pos->y, 5);
+  return world->currLevel->isInFoV(target_x, target_y);
+}
+
 void AISystem::basicMotion(entityx::Entity e) {
+
+  world->currLevel->calculateMaps();
   world->currLevel->computeMovesTo(target_x, target_y);
-  if (canMoveToward(e)) {
+
+  if (canSee(e) && canMoveToward(e)) {
     moveToward(e);
   }
   // if (failMoraleCheck() && canMoveAway()) {
