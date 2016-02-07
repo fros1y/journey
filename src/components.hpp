@@ -16,8 +16,10 @@ struct Attackable {
 };
 
 struct Render {
-  Render(Glyph glyph) : glyph(glyph) {}
   Glyph glyph;
+  bool known;
+  bool lit;
+  Render(Glyph glyph) : glyph(glyph), known(false), lit(false) {}
 };
 
 struct Position {

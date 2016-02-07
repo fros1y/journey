@@ -73,12 +73,12 @@ void AISystem::basicMotion(entityx::Entity e) {
   // }
 }
 
-// void AISystem::randomMotion(entityx::Entity e) {
-//   int d_x = world->rnd->getInt(-1, 1);
-//   int d_y = world->rnd->getInt(-1, 1);
-//   world->events.emit<Movement>(e, d_x, d_y);
-// }
-//
+void AISystem::randomMotion(entityx::Entity e) {
+  int d_x = world->rnd->getInt(-1, 1);
+  int d_y = world->rnd->getInt(-1, 1);
+  world->events.emit<Movement>(e, d_x, d_y);
+}
+
 void AISystem::zombieMotion(entityx::Entity e) {
   int d_x = 0;
   int d_y = 0;
