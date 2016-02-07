@@ -5,7 +5,6 @@ void Map::makeBlock(int x, int y) {
   block.assign<Position>(x, y);
   block.assign<Obstruction>();
   block.assign<Render>('#');
-  block.assign<MapElement>(1);
   set(x, y, block);
 }
 
@@ -13,7 +12,6 @@ void Map::makeFloor(int x, int y) {
   auto floor = world->entities.create();
   floor.assign<Position>(x, y);
   floor.assign<Render>('.');
-  floor.assign<MapElement>(0);
   set(x, y, floor);
 }
 
