@@ -18,10 +18,13 @@ void Display::clear() {
   statusBarView->clear();
 }
 
-void Display::drawEntity(int x, int y, Glyph g) {
+void Display::drawEntity(int x, int y, Glyph g, bool lit) {
   int sc_x = x - camera_x;
   int sc_y = y - camera_y;
   levelView->putChar(sc_x, sc_y, g);
+  if (lit) {
+    levelView->setCharForeground(sc_x, sc_y, TCODColor::lightestYellow);
+  }
 }
 
 void Display::statusBar(std::shared_ptr<World> world) {

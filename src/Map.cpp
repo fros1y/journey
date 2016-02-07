@@ -23,14 +23,25 @@ bool Map::populated(int x, int y) {
 }
 
 void Map::makeTCODMap() {
+  if (tcod_map)
+    delete tcod_map;
   tcod_map = new TCODMap(width, height);
-  for (auto i = 0; i < width; i++) {
-    for (auto j = 0; j < height; j++) {
-      bool walkable = !obstructs(i, j);
-      bool transparent = walkable;
-      tcod_map->setProperties(i, j, walkable, transparent);
-    }
-  }
+  // for (auto i = 0; i < width; i++) {
+  //   for (auto j = 0; j < height; j++) {
+  //     bool walkable = !obstructs(i, j);
+  //     bool transparent = walkable;
+  //     tcod_map->setProperties(i, j, walkable, transparent);
+  //   }
+  // }
+  world->entities.each<MapElement, Position>(
+      [this](entityx::Entity entity, MapElement &me, Position &position) {
+        bool walkable = !entity.has_component<Obstruction>();
+        bool transparent = walkable;
+        tcod_map->setProperties(position.x, position.y, walkable, transparent);
+      });
+
+  if (djikstra_map)
+    delete djikstra_map;
   djikstra_map = new TCODDijkstra(tcod_map, 1.0f);
 }
 
@@ -106,6 +117,5 @@ void Map::generateArena() {
     return;
   };
   floodFill(1, 1, f);
-  makeTCODMap();
   addMonsters();
 }

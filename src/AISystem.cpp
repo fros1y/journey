@@ -7,9 +7,11 @@ void AISystem::update(entityx::EntityManager &es, entityx::EventManager &events,
   target_x = player_pos->x;
   target_y = player_pos->y;
 
-  world->currLevel->djikstra_map->compute(target_x, target_y);
-  es.each<NPC>(
-      [this](entityx::Entity entity, NPC &npc) { basicMotion(entity); });
+  es.each<NPC>([this](entityx::Entity entity, NPC &npc) {
+    world->currLevel->makeTCODMap();
+    world->currLevel->djikstra_map->compute(target_x, target_y);
+    basicMotion(entity);
+  });
 }
 
 bool AISystem::failMoraleCheck() { return false; }

@@ -25,7 +25,7 @@ struct Display {
   void init(void);
   void clear();
 
-  void drawEntity(int x, int y, Glyph g);
+  void drawEntity(int x, int y, Glyph g, bool lit = true);
 
   void statusBar(std::shared_ptr<World> world);
 

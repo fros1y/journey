@@ -16,7 +16,7 @@ void World::generateMap() {
 void World::setupPlayer() {
   player = ECS.entities.create();
   player.assign<Position>(20, 10);
-  player.assign<Health>(100);
+  player.assign<Health>(1000);
   player.assign<Obstruction>();
   player.assign<Render>('@');
   player.assign<Attackable>();

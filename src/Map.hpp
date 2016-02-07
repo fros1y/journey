@@ -13,8 +13,8 @@ struct Map {
   int width;
   int height;
 
-  TCODMap *tcod_map;
-  TCODDijkstra *djikstra_map;
+  TCODMap *tcod_map = nullptr;
+  TCODDijkstra *djikstra_map = nullptr;
 
   std::vector<entityx::Entity> tiles;
 
