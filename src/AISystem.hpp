@@ -12,6 +12,9 @@
 struct AISystem : entityx::System<AISystem> {
   std::shared_ptr<World> world;
 
+  int target_x;
+  int target_y;
+
   AISystem(std::shared_ptr<World> world) : world(world) {}
 
   void update(entityx::EntityManager &es, entityx::EventManager &events,
@@ -25,9 +28,9 @@ struct AISystem : entityx::System<AISystem> {
   bool canMoveAway();
   void moveAway();
   bool hasRangedAttack();
-  bool canMoveToward();
+  bool canMoveToward(entityx::Entity e);
   bool decideToCharge();
-  void moveToward();
+  void moveToward(entityx::Entity e);
   void rangedAttack();
   bool canAttack();
   bool decideToRetreat();

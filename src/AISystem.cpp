@@ -2,8 +2,14 @@
 
 void AISystem::update(entityx::EntityManager &es, entityx::EventManager &events,
                       entityx::TimeDelta dt) {
+  entityx::ComponentHandle<Position> player_pos =
+      world->player.component<Position>();
+  target_x = player_pos->x;
+  target_y = player_pos->y;
+
+  world->currLevel->djikstra_map->compute(target_x, target_y);
   es.each<NPC>(
-      [this](entityx::Entity entity, NPC &npc) { zombieMotion(entity); });
+      [this](entityx::Entity entity, NPC &npc) { basicMotion(entity); });
 }
 
 bool AISystem::failMoraleCheck() { return false; }
@@ -14,11 +20,21 @@ void AISystem::moveAway() {}
 
 bool AISystem::hasRangedAttack() { return false; }
 
-bool AISystem::canMoveToward() { return false; }
+bool AISystem::canMoveToward(entityx::Entity e) {
+  entityx::ComponentHandle<Position> AI_pos = e.component<Position>();
+  return world->currLevel->djikstra_map->setPath(AI_pos->x, AI_pos->y);
+}
 
 bool AISystem::decideToCharge() { return false; }
 
-void AISystem::moveToward() {}
+void AISystem::moveToward(entityx::Entity e) {
+  entityx::ComponentHandle<Position> AI_pos = e.component<Position>();
+  world->currLevel->djikstra_map->setPath(AI_pos->x, AI_pos->y);
+  world->currLevel->djikstra_map->reverse();
+  int g_x, g_y;
+  world->currLevel->djikstra_map->walk(&g_x, &g_y);
+  world->events.emit<Movement>(e, g_x - AI_pos->x, g_y - AI_pos->y);
+}
 
 void AISystem::rangedAttack() {}
 
@@ -31,27 +47,30 @@ void AISystem::attack() {}
 void AISystem::wait() {}
 
 void AISystem::basicMotion(entityx::Entity e) {
-  if (failMoraleCheck() && canMoveAway()) {
-    moveAway();
-  } else if (hasRangedAttack() && canMoveToward()) {
-    if (decideToCharge()) {
-      moveToward();
-    } else {
-      rangedAttack();
-    }
-  } else if (canAttack() && hasRangedAttack() && canMoveAway()) {
-    if (decideToRetreat()) {
-      moveAway();
-    } else {
-      attack();
-    }
-  } else if (canAttack()) {
-    attack();
-  } else if (canMoveToward()) {
-    moveToward();
-  } else {
-    wait();
+  if (canMoveToward(e)) {
+    moveToward(e);
   }
+  // if (failMoraleCheck() && canMoveAway()) {
+  //   moveAway();
+  // } else if (hasRangedAttack() && canMoveToward(e)) {
+  //   if (decideToCharge()) {
+  //     moveToward(e);
+  //   } else {
+  //     rangedAttack();
+  //   }
+  // } else if (canAttack() && hasRangedAttack() && canMoveAway()) {
+  //   if (decideToRetreat()) {
+  //     moveAway();
+  //   } else {
+  //     attack();
+  //   }
+  // } else if (canAttack()) {
+  //   attack();
+  // } else if (canMoveToward(e)) {
+  //   moveToward(e);
+  // } else {
+  //   wait();
+  // }
 }
 
 // void AISystem::randomMotion(entityx::Entity e) {

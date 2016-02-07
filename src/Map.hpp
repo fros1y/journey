@@ -14,6 +14,7 @@ struct Map {
   int height;
 
   TCODMap *tcod_map;
+  TCODDijkstra *djikstra_map;
 
   std::vector<entityx::Entity> tiles;
 

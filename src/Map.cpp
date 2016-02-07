@@ -31,6 +31,7 @@ void Map::makeTCODMap() {
       tcod_map->setProperties(i, j, walkable, transparent);
     }
   }
+  djikstra_map = new TCODDijkstra(tcod_map, 1.0f);
 }
 
 bool Map::obstructs(int x, int y) {
@@ -73,19 +74,19 @@ void Map::floodFill(int x, int y, std::function<void(int, int)> &builder) {
 }
 
 void Map::addMonsters() {
-  // for (auto i = 0; i < 5; ++i) {
-  //   int m_x, m_y;
-  //   m_x = world->rnd->getInt(0, width);
-  //   m_y = world->rnd->getInt(0, height);
-  //
-  //   auto enemy = world->entities.create();
-  //   enemy.assign<Position>(m_x, m_y);
-  //   enemy.assign<Obstruction>(true, false);
-  //   enemy.assign<Render>('r');
-  //   enemy.assign<NPC>("rat");
-  //   enemy.assign<Health>(5);
-  //   enemy.assign<Attackable>();
-  // }
+  for (auto i = 0; i < 50; ++i) {
+    int m_x, m_y;
+    m_x = world->rnd->getInt(0, width);
+    m_y = world->rnd->getInt(0, height);
+
+    auto enemy = world->entities.create();
+    enemy.assign<Position>(m_x, m_y);
+    enemy.assign<Obstruction>(true, false);
+    enemy.assign<Render>('r');
+    enemy.assign<NPC>("rat");
+    enemy.assign<Health>(5);
+    enemy.assign<Attackable>();
+  }
 }
 
 void Map::generateCavern() {}
@@ -106,6 +107,5 @@ void Map::generateArena() {
   };
   floodFill(1, 1, f);
   makeTCODMap();
-  // toEntities();
-  // addMonsters();
+  addMonsters();
 }
