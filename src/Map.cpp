@@ -40,8 +40,14 @@ void Map::calculateMaps() {
   d_map = std::make_shared<DjikstraMap>(width, height);
   world->entities.each<Position>(
       [this](entityx::Entity entity, Position &position) {
-        bool walkable = !entity.has_component<Obstruction>();
-        bool transparent = walkable;
+      entityx::ComponentHandle<Obstruction> ob = entity.component<Obstruction>();
+      bool walkable = true;
+      bool transparent = true;
+
+      if(ob) {
+          walkable = !(ob->obstructs);
+          transparent = !(ob->blocksView);
+      }
         tcod_map->setProperties(position.x, position.y, walkable, transparent);
         d_map->setProperties(position.x, position.y, walkable);
       });

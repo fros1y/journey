@@ -42,13 +42,10 @@ struct NPC {
 
 struct Obstruction {
   bool obstructs;
-  bool obstructsAbove;
-  bool obstructsBelow;
+  bool blocksView;
 
-  Obstruction(bool obstructs = true, bool obstructsAbove = true,
-              bool obstructsBelow = true)
-      : obstructs(obstructs), obstructsAbove(obstructsAbove),
-        obstructsBelow(obstructsBelow) {}
+  Obstruction(bool obstructs = true, bool blocksView = true)
+      : obstructs(obstructs), blocksView(blocksView) {}
 };
 
 #endif
