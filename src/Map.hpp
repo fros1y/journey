@@ -3,6 +3,7 @@
 
 #include "World.hpp"
 #include <entityx/entityx.h>
+#include <libtcod.hpp>
 #include <memory>
 #include <string>
 #include <vector>
@@ -12,6 +13,8 @@ struct Map {
   int width;
   int height;
 
+  TCODMap *tcod_map;
+
   std::vector<entityx::Entity> tiles;
 
   entityx::Entity get(int x, int y);
@@ -20,8 +23,6 @@ struct Map {
 
   bool obstructs(int x, int y);
   bool populated(int x, int y);
-
-  void toEntities();
 
   Map(std::shared_ptr<World> world, int width, int height)
       : world(world), width(width), height(height), tiles(width * height) {}
@@ -33,5 +34,7 @@ struct Map {
   void generateCavern();
 
   void addMonsters();
+
+  void makeTCODMap();
 };
 #endif

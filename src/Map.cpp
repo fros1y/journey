@@ -5,7 +5,7 @@ void Map::makeBlock(int x, int y) {
   block.assign<Position>(x, y);
   block.assign<Obstruction>();
   block.assign<Render>('#');
-  block.assign<MapElement>();
+  block.assign<MapElement>(1);
   set(x, y, block);
 }
 
@@ -13,13 +13,24 @@ void Map::makeFloor(int x, int y) {
   auto floor = world->entities.create();
   floor.assign<Position>(x, y);
   floor.assign<Render>('.');
-  floor.assign<MapElement>();
+  floor.assign<MapElement>(0);
   set(x, y, floor);
 }
 
 bool Map::populated(int x, int y) {
   auto e = get(x, y);
   return e == true;
+}
+
+void Map::makeTCODMap() {
+  tcod_map = new TCODMap(width, height);
+  for (auto i = 0; i < width; i++) {
+    for (auto j = 0; j < height; j++) {
+      bool walkable = !obstructs(i, j);
+      bool transparent = walkable;
+      tcod_map->setProperties(i, j, walkable, transparent);
+    }
+  }
 }
 
 bool Map::obstructs(int x, int y) {
@@ -77,18 +88,6 @@ void Map::addMonsters() {
   // }
 }
 
-void Map::toEntities() {
-  // for (auto i = 0; i < width; ++i) {
-  //   for (auto j = 0; j < height; ++j) {
-  //     if (get(i, j) == '#') {
-  //       makeBlock(i, j);
-  //     } else {
-  //       makeFloor(i, j);
-  //     }
-  //   }
-  // }
-}
-
 void Map::generateCavern() {}
 
 void Map::generateArena() {
@@ -106,6 +105,7 @@ void Map::generateArena() {
     return;
   };
   floodFill(1, 1, f);
+  makeTCODMap();
   // toEntities();
   // addMonsters();
 }

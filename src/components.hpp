@@ -7,7 +7,8 @@
 typedef char Glyph;
 
 struct MapElement {
-  MapElement() {}
+  int type;
+  MapElement(int type) : type(type) {}
 };
 
 struct Attackable {
