@@ -20,6 +20,7 @@ void World::setupPlayer() {
   player.assign<Obstruction>();
   player.assign<Render>('@');
   player.assign<Attackable>();
+  player.assign<LightSource>(5);
 }
 
 void World::startSystems(std::shared_ptr<Display> d) {
