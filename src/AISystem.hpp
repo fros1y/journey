@@ -1,13 +1,13 @@
 #ifndef _AISYSTEM_HPP
 #define _AISYSTEM_HPP
 
-#include "World.hpp"
-#include "components.hpp"
-#include "events.hpp"
 #include <entityx/entityx.h>
 #include <libtcod.hpp>
 #include <memory>
 #include <string>
+#include "World.hpp"
+#include "components.hpp"
+#include "events.hpp"
 
 struct AISystem : entityx::System<AISystem> {
   std::shared_ptr<World> world;

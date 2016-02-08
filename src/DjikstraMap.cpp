@@ -14,8 +14,7 @@ void DjikstraMap::calculate(int d_x, int d_y) {
     for (auto i = 0; i < width; i++) {
       for (auto j = 0; j < height; j++) {
         int val = get(i, j);
-        if (val == 9999)
-          continue;
+        if (val == 9999) continue;
         std::vector<int> directions = {get(i + 1, j), get(i - 1, j),
                                        get(i, j + 1), get(i, j - 1)};
         int lowest_neighboor = min(directions);

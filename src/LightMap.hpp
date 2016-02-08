@@ -14,12 +14,11 @@ struct LightMap {
   bool illuminated(int x, int y);
 
   int get(int x, int y) {
-    if (x < 0 || y < 0 || x > width || y > height)
-      return -1;
+    if (x < 0 || y < 0 || x > width || y > height) return -1;
     return lightLevel[width * y + x];
   }
 
   void set(int x, int y, int v) { lightLevel[width * y + x] = v; }
 };
 
-#endif // LIGHTMAP_HPP
+#endif  // LIGHTMAP_HPP

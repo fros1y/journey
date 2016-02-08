@@ -3,11 +3,13 @@
 
 #include <memory>
 #include <string>
+#include <libtcod.hpp>
 
 typedef char Glyph;
 
 struct LightSource {
   int brightness;
+    TCODColor color;
   LightSource(int brightness = 3) : brightness(brightness) {}
 };
 

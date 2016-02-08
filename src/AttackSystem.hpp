@@ -1,11 +1,11 @@
 #ifndef _ATTACKSYSTEM_HPP
 #define _ATTACKSYSTEM_HPP
 
-#include "World.hpp"
-#include "events.hpp"
 #include <entityx/entityx.h>
 #include <memory>
 #include <string>
+#include "World.hpp"
+#include "events.hpp"
 
 struct AttackSystem : entityx::System<AttackSystem>,
                       public entityx::Receiver<AttackSystem> {

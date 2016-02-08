@@ -35,16 +35,12 @@ void Map::nextStepFrom(int x, int y, int &n_x, int &n_y) {
 bool Map::canReachFrom(int x, int y) { return d_map->canReachFrom(x, y); }
 
 void Map::calculateMaps() {
-
   // We only need to recalculate when the turn advances.
   if (calculatedForTurn != world->turnCount) {
     calculatedForTurn = world->turnCount;
-    if (tcod_map)
-      tcod_map = nullptr;
-    if (d_map)
-      d_map = nullptr;
-    if (l_map)
-      l_map = nullptr;
+    if (tcod_map) tcod_map = nullptr;
+    if (d_map) d_map = nullptr;
+    if (l_map) l_map = nullptr;
   } else
     return;
 
@@ -81,8 +77,7 @@ void Map::calculateMaps() {
 
 bool Map::obstructs(int x, int y) {
   auto e = get(x, y);
-  if (!e)
-    return false;
+  if (!e) return false;
   entityx::ComponentHandle<Obstruction> ob = e.component<Obstruction>();
   if (ob && ob->obstructs) {
     return true;
@@ -100,22 +95,14 @@ void Map::floodFill(int x, int y, std::function<void(int, int)> &builder) {
   } else {
     builder(x, y);
   }
-  if (y > 0)
-    floodFill(x, y - 1, builder);
-  if (x > 0)
-    floodFill(x - 1, y, builder);
-  if (x > 0 && y > 0)
-    floodFill(x - 1, y - 1, builder);
-  if (x < width - 1)
-    floodFill(x + 1, y, builder);
-  if (y < height - 1)
-    floodFill(x, y + 1, builder);
-  if (x < width - 1 && y < height - 1)
-    floodFill(x + 1, y + 1, builder);
-  if (x > 0 && y < height - 1)
-    floodFill(x - 1, y + 1, builder);
-  if (x < width - 1 && y > 0)
-    floodFill(x + 1, y - 1, builder);
+  if (y > 0) floodFill(x, y - 1, builder);
+  if (x > 0) floodFill(x - 1, y, builder);
+  if (x > 0 && y > 0) floodFill(x - 1, y - 1, builder);
+  if (x < width - 1) floodFill(x + 1, y, builder);
+  if (y < height - 1) floodFill(x, y + 1, builder);
+  if (x < width - 1 && y < height - 1) floodFill(x + 1, y + 1, builder);
+  if (x > 0 && y < height - 1) floodFill(x - 1, y + 1, builder);
+  if (x < width - 1 && y > 0) floodFill(x + 1, y - 1, builder);
 }
 
 void Map::addMonsters() {

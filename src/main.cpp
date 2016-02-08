@@ -1,4 +1,5 @@
 #include <chrono>
+#include <memory>
 #include <thread>
 
 #include <entityx/entityx.h>
@@ -20,25 +21,24 @@ void gameLoop(std::shared_ptr<World> world, std::shared_ptr<Display> display) {
 
   TCODConsole::setKeyboardRepeat(200, 200);
   while (!TCODConsole::isWindowClosed()) {
-
     TCOD_key_t key = TCODConsole::checkForKeypress();
     switch (key.vk) {
-    case TCODK_UP:
-      d_y = -1;
-      break;
-    case TCODK_DOWN:
-      d_y = 1;
-      break;
-    case TCODK_LEFT:
-      d_x = -1;
-      break;
-    case TCODK_RIGHT:
-      d_x = 1;
-      break;
-    default:
-      world->updateDisplayOnly();
-      continue;
-      break;
+      case TCODK_UP:
+        d_y = -1;
+        break;
+      case TCODK_DOWN:
+        d_y = 1;
+        break;
+      case TCODK_LEFT:
+        d_x = -1;
+        break;
+      case TCODK_RIGHT:
+        d_x = 1;
+        break;
+      default:
+        world->updateDisplayOnly();
+        continue;
+        break;
     }
 
     if ((d_x != 0) or (d_y != 0)) {

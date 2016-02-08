@@ -3,11 +3,11 @@
 
 struct World;
 
-#include "World.hpp"
-#include "components.hpp"
 #include <libtcod.hpp>
 #include <memory>
 #include <string>
+#include "World.hpp"
+#include "components.hpp"
 
 struct Display {
   int width;

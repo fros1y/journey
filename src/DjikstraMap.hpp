@@ -17,8 +17,7 @@ struct DjikstraMap {
   void setProperties(int x, int y, bool traversable);
 
   int get(int x, int y) {
-    if (x < 0 || y < 0 || x > width || y > height)
-      return 9999;
+    if (x < 0 || y < 0 || x > width || y > height) return 9999;
     return cells[width * y + x];
   }
 

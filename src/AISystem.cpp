@@ -51,7 +51,6 @@ bool AISystem::canSee(entityx::Entity e) {
 }
 
 void AISystem::basicMotion(entityx::Entity e) {
-
   world->currLevel->calculateMaps();
   world->currLevel->computeMovesTo(target_x, target_y);
 

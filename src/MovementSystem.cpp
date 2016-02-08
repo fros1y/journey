@@ -31,8 +31,7 @@ void MovementSystem::configure(entityx::EventManager &event_manager) {
 
 void MovementSystem::receive(const Movement &move) {
   auto mover = move.target;
-  if (move.d_x == 0 && move.d_y == 0)
-    return;
+  if (move.d_x == 0 && move.d_y == 0) return;
 
   entityx::ComponentHandle<Position> position = mover.component<Position>();
   if (!position) {
@@ -47,7 +46,6 @@ void MovementSystem::receive(const Movement &move) {
 
   bool obstruction = false;
   if (world->entitiesAt(entitiesAtDest, destination_x, destination_y)) {
-
     if (attack_filter(NPCsAtDest, entitiesAtDest) > 0) {
       if (!mover.component<AI>() || !NPCsAtDest[0].component<AI>())
         // monsters don't kill monsters

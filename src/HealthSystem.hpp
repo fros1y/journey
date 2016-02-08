@@ -1,11 +1,11 @@
 #ifndef _HEALTHSYSTEM_HPP
 #define _HEALTHSYSTEM_HPP
 
-#include "World.hpp"
-#include "events.hpp"
 #include <entityx/entityx.h>
 #include <memory>
 #include <string>
+#include "World.hpp"
+#include "events.hpp"
 
 struct HealthSystem : entityx::System<HealthSystem>,
                       public entityx::Receiver<HealthSystem> {

@@ -1,11 +1,11 @@
 #ifndef _DISPLAYSYSTEM_HPP
 #define _DISPLAYSYSTEM_HPP
 
-#include "World.hpp"
-#include "events.hpp"
 #include <entityx/entityx.h>
 #include <memory>
 #include <string>
+#include "World.hpp"
+#include "events.hpp"
 
 struct DisplaySystem : entityx::System<DisplaySystem>,
                        public entityx::Receiver<DisplaySystem> {

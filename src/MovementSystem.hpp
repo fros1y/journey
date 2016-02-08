@@ -1,11 +1,11 @@
 #ifndef _MOVEMENTSYSTEM_HPP
 #define _MOVEMENTSYSTEM_HPP
 
-#include "World.hpp"
-#include "events.hpp"
 #include <entityx/entityx.h>
 #include <memory>
 #include <string>
+#include "World.hpp"
+#include "events.hpp"
 
 bool obstructsTest(entityx::Entity e);
 bool NPCTest(entityx::Entity e);

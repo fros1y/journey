@@ -4,12 +4,12 @@
 struct Display;
 struct Map;
 
-#include "Display.hpp"
-#include "Map.hpp"
 #include <entityx/entityx.h>
 #include <libtcod.hpp>
 #include <memory>
 #include <string>
+#include "Display.hpp"
+#include "Map.hpp"
 
 #include "AISystem.hpp"
 #include "AttackSystem.hpp"

@@ -1,14 +1,14 @@
 #ifndef _MAP_HPP
 #define _MAP_HPP
 
-#include "DjikstraMap.hpp"
-#include "World.hpp"
 #include <entityx/entityx.h>
 #include <libtcod.hpp>
 #include <memory>
 #include <string>
 #include <vector>
+#include "DjikstraMap.hpp"
 #include "LightMap.hpp"
+#include "World.hpp"
 
 struct Map {
   std::shared_ptr<World> world;
@@ -31,7 +31,10 @@ struct Map {
   bool populated(int x, int y);
 
   Map(std::shared_ptr<World> world, int width, int height)
-      : world(world), width(width), height(height), calculatedForTurn(-1),
+      : world(world),
+        width(width),
+        height(height),
+        calculatedForTurn(-1),
         tiles(width * height) {}
 
   void makeBlock(int x, int y);
