@@ -7,8 +7,8 @@
 typedef char Glyph;
 
 struct LightSource {
-    int brightness;
-    LightSource(int brightness=3): brightness(brightness) {}
+  int brightness;
+  LightSource(int brightness = 3) : brightness(brightness) {}
 };
 
 struct Attackable {

@@ -144,7 +144,9 @@ void Map::generateArena() {
       }
       if (i % 7 == 0 && j % 7 == 0) {
         makeBlock(j, i);
-        //makeLightSource(j, i, 2);
+      }
+      if (i % 14 == 0 && j % 14 == 0) {
+        makeLightSource(j, i, 2);
       }
     }
   }

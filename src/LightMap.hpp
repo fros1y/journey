@@ -3,13 +3,13 @@
 
 #include <vector>
 
-struct LightMap
-{
-    int width;
-    int height;
-    std::vector<int> lightLevel;
+struct LightMap {
+  int width;
+  int height;
+  std::vector<int> lightLevel;
 
-  LightMap(int width, int height) : width(width), height(height), lightLevel(width * height, 0) {}
+  LightMap(int width, int height)
+      : width(width), height(height), lightLevel(width * height, 0) {}
 
   bool illuminated(int x, int y);
 
@@ -20,7 +20,6 @@ struct LightMap
   }
 
   void set(int x, int y, int v) { lightLevel[width * y + x] = v; }
-
 };
 
 #endif // LIGHTMAP_HPP

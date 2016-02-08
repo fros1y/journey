@@ -7,8 +7,7 @@ void AISystem::update(entityx::EntityManager &es, entityx::EventManager &events,
   target_x = player_pos->x;
   target_y = player_pos->y;
 
-  es.each<AI>(
-      [this](entityx::Entity entity, AI &npc) { basicMotion(entity); });
+  es.each<AI>([this](entityx::Entity entity, AI &npc) { basicMotion(entity); });
 }
 
 bool AISystem::failMoraleCheck() { return false; }

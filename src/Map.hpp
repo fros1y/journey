@@ -31,11 +31,12 @@ struct Map {
   bool populated(int x, int y);
 
   Map(std::shared_ptr<World> world, int width, int height)
-      : world(world), width(width), height(height), calculatedForTurn(-1), tiles(width * height) {}
+      : world(world), width(width), height(height), calculatedForTurn(-1),
+        tiles(width * height) {}
 
   void makeBlock(int x, int y);
   void makeFloor(int x, int y);
-  void makeLightSource(int x, int y, int brightness=6);
+  void makeLightSource(int x, int y, int brightness = 6);
 
   void generateArena();
   void generateCavern();
