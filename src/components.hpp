@@ -6,6 +6,10 @@
 
 typedef char Glyph;
 
+struct LightSource {
+    int brightness;
+    LightSource(int brightness=3): brightness(brightness) {}
+};
 
 struct Attackable {
   Attackable() {}
@@ -14,8 +18,7 @@ struct Attackable {
 struct Render {
   Glyph glyph;
   bool known;
-  bool lit;
-  Render(Glyph glyph) : glyph(glyph), known(false), lit(false) {}
+  Render(Glyph glyph) : glyph(glyph), known(false) {}
 };
 
 struct Position {

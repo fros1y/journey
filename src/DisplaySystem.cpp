@@ -20,7 +20,8 @@ void DisplaySystem::update(entityx::EntityManager &es,
   world->currLevel->computeFoVFrom(position->x, position->y, 0);
   es.each<Position, Render>(
       [this](entityx::Entity entity, Position &position, Render &render) {
-        if (world->currLevel->isInFoV(position.x, position.y)) {
+        if (world->currLevel->isInFoV(position.x, position.y) &&
+            world->currLevel->l_map->illuminated(position.x, position.y)) {
           if (!entity.has_component<AI>())
             render.known = true;
           display->drawEntity(position.x, position.y, render.glyph, true);

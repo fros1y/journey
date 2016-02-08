@@ -8,6 +8,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "LightMap.hpp"
 
 struct Map {
   std::shared_ptr<World> world;
@@ -18,6 +19,7 @@ struct Map {
 
   std::shared_ptr<TCODMap> tcod_map;
   std::shared_ptr<DjikstraMap> d_map;
+  std::shared_ptr<LightMap> l_map;
 
   std::vector<entityx::Entity> tiles;
 
@@ -33,6 +35,7 @@ struct Map {
 
   void makeBlock(int x, int y);
   void makeFloor(int x, int y);
+  void makeLightSource(int x, int y, int brightness=6);
 
   void generateArena();
   void generateCavern();

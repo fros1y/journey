@@ -1,5 +1,11 @@
 #include "Map.hpp"
 
+void Map::makeLightSource(int x, int y, int brightness) {
+  auto light = world->entities.create();
+  light.assign<Position>(x, y);
+  light.assign<LightSource>(brightness);
+}
+
 void Map::makeBlock(int x, int y) {
   auto block = world->entities.create();
   block.assign<Position>(x, y);
@@ -37,11 +43,15 @@ void Map::calculateMaps() {
       tcod_map = nullptr;
     if (d_map)
       d_map = nullptr;
+    if (l_map)
+      l_map = nullptr;
   } else
     return;
 
   tcod_map = std::make_shared<TCODMap>(width, height);
   d_map = std::make_shared<DjikstraMap>(width, height);
+  l_map = std::make_shared<LightMap>(width, height);
+
   world->entities.each<Position>([this](entityx::Entity entity,
                                         Position &position) {
     entityx::ComponentHandle<Obstruction> ob = entity.component<Obstruction>();
@@ -55,6 +65,18 @@ void Map::calculateMaps() {
     tcod_map->setProperties(position.x, position.y, walkable, transparent);
     d_map->setProperties(position.x, position.y, walkable);
   });
+
+  world->entities.each<LightSource, Position>(
+      [this](entityx::Entity entity, LightSource &l, Position &position) {
+        world->currLevel->computeFoVFrom(position.x, position.y, l.brightness);
+        for (auto i = 0; i < width; i++) {
+          for (auto j = 0; j < height; j++) {
+            if (world->currLevel->isInFoV(i, j)) {
+              l_map->set(i, j, 1);
+            }
+          }
+        }
+      });
 }
 
 bool Map::obstructs(int x, int y) {
@@ -117,13 +139,15 @@ void Map::generateCavern() {}
 void Map::generateArena() {
   for (auto i = 0; i < height; ++i) {
     for (auto j = 0; j < width; ++j) {
-      if (i == 0 || j == 0 || i == height - 1 || j == width - 1 ||
-          (i % 7 == 0 && j % 7 == 0)) {
+      if (i == 0 || j == 0 || i == height - 1 || j == width - 1) {
         makeBlock(j, i);
+      }
+      if (i % 7 == 0 && j % 7 == 0) {
+        makeBlock(j, i);
+        //makeLightSource(j, i, 2);
       }
     }
   }
-
   std::function<void(int, int)> f = [=](int x, int y) {
     makeFloor(x, y);
     return;
