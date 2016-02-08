@@ -1,6 +1,8 @@
 #ifndef _EVENTS_HPP
 #define _EVENTS_HPP
 
+#include <entityx/entityx.h>
+
 struct Movement {
   mutable entityx::Entity target;
   int d_x;

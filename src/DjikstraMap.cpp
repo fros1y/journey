@@ -1,9 +1,5 @@
 #include "DjikstraMap.hpp"
-#include <algorithm>
-
-int min(std::vector<int> list) {
-  return *(min_element(list.begin(), list.end()));
-}
+#include "utils.h"
 
 void DjikstraMap::calculate(int d_x, int d_y) {
   bool changeMade = true;
