@@ -9,13 +9,13 @@
 #include "components.hpp"
 #include "events.hpp"
 
-struct AISystem : entityx::System<AISystem> {
+struct AISystem: entityx::System<AISystem> {
   std::shared_ptr<World> world;
 
   int target_x;
   int target_y;
 
-  AISystem(std::shared_ptr<World> world) : world(world) {}
+  AISystem(std::shared_ptr<World> world) : world(world) { }
 
   void update(entityx::EntityManager &es, entityx::EventManager &events,
               entityx::TimeDelta dt) override;

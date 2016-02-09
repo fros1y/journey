@@ -9,7 +9,7 @@ struct DjikstraMap {
   std::vector<int> cells;
 
   DjikstraMap(const int width, const int height)
-      : width(width), height(height), cells(width * height, 9999) {}
+      : width(width), height(height), cells(width * height, 9999) { }
 
   void calculate(const int d_x, const int d_y);
   void nextStepFrom(const int x, const int y, int &n_x, int &n_y);

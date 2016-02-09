@@ -7,14 +7,14 @@
 #include "World.hpp"
 #include "events.hpp"
 
-struct AttackSystem : entityx::System<AttackSystem>,
-                      public entityx::Receiver<AttackSystem> {
+struct AttackSystem: entityx::System<AttackSystem>,
+                     public entityx::Receiver<AttackSystem> {
   std::shared_ptr<World> world;
 
-  AttackSystem(std::shared_ptr<World> world) : world(world) {}
+  AttackSystem(std::shared_ptr<World> world) : world(world) { }
 
   void update(entityx::EntityManager &es, entityx::EventManager &events,
-              entityx::TimeDelta dt) override {}
+              entityx::TimeDelta dt) override { }
 
   void configure(entityx::EventManager &event_manager) override;
 

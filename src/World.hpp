@@ -22,7 +22,7 @@ struct Map;
 #include "components.hpp"
 #include "events.hpp"
 
-struct World : std::enable_shared_from_this<World> {
+struct World: std::enable_shared_from_this<World> {
   entityx::EntityX ECS;
   entityx::Entity player;
   int turnCount = 0;
@@ -32,7 +32,7 @@ struct World : std::enable_shared_from_this<World> {
 
   TCODRandom *rnd;
 
-  World() {}
+  World() { }
 
   void init(std::shared_ptr<Display> d);
   void generateMap();

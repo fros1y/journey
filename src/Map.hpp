@@ -35,7 +35,7 @@ struct Map {
         width(width),
         height(height),
         calculatedForTurn(-1),
-        tiles(width * height) {}
+        tiles(width * height) { }
 
   void makeBlock(int x, int y);
   void makeFloor(int x, int y);
@@ -43,7 +43,7 @@ struct Map {
 
   void generateArena();
 
-    void addMonsters();
+  void addMonsters();
 
   void calculateMaps();
 
@@ -53,5 +53,6 @@ struct Map {
 
   void computeFoVFrom(int x, int y, int range);
   bool isInFoV(int x, int y);
+  void calculateLighting() const;
 };
 #endif

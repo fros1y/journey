@@ -22,7 +22,7 @@ void DisplaySystem::update(entityx::EntityManager &es,
       [this](entityx::Entity entity, Position &position, Render &render) {
         if (world->currLevel->isInFoV(position.x, position.y) &&
             world->currLevel->l_map->illuminated(position.x, position.y)) {
-            TCODColor renderColor = render.color * world->currLevel->l_map->getColor(position.x, position.y);
+          TCODColor renderColor = render.color * world->currLevel->l_map->getColor(position.x, position.y);
           if (!entity.has_component<AI>()) render.known = true;
           display->drawEntity(position.x, position.y, render.glyph, renderColor);
         } else if (render.known)

@@ -9,13 +9,13 @@
 
 bool obstructsTest(entityx::Entity e);
 
-struct MovementSystem : entityx::System<MovementSystem>,
-                        public entityx::Receiver<MovementSystem> {
+struct MovementSystem: entityx::System<MovementSystem>,
+                       public entityx::Receiver<MovementSystem> {
   std::shared_ptr<World> world;
-  MovementSystem(std::shared_ptr<World> world) : world(world) {}
+  MovementSystem(std::shared_ptr<World> world) : world(world) { }
 
   void update(entityx::EntityManager &entities, entityx::EventManager &events,
-              entityx::TimeDelta dt) override {}
+              entityx::TimeDelta dt) override { }
 
   void configure(entityx::EventManager &event_manager) override;
 

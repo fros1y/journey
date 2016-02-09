@@ -52,8 +52,8 @@ void MovementSystem::receive(const Movement &move) {
         world->events.emit<Attack>(mover, NPCsAtDest[0]);
       obstruction = true;
     } else if (std::any_of(
-                   entitiesAtDest.cbegin(), entitiesAtDest.cend(),
-                   [](entityx::Entity e) { return obstructsTest(e); })) {
+        entitiesAtDest.cbegin(), entitiesAtDest.cend(),
+        [](entityx::Entity e) { return obstructsTest(e); })) {
       obstruction = true;
       world->events.emit<Message>("Bump!");
     }

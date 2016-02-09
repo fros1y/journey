@@ -7,12 +7,12 @@
 #include "World.hpp"
 #include "events.hpp"
 
-struct HealthSystem : entityx::System<HealthSystem>,
-                      public entityx::Receiver<HealthSystem> {
+struct HealthSystem: entityx::System<HealthSystem>,
+                     public entityx::Receiver<HealthSystem> {
   std::shared_ptr<World> world;
-  HealthSystem(std::shared_ptr<World> world) : world(world) {}
+  HealthSystem(std::shared_ptr<World> world) : world(world) { }
   void update(entityx::EntityManager &es, entityx::EventManager &events,
-              entityx::TimeDelta dt) override {}
+              entityx::TimeDelta dt) override { }
 
   void configure(entityx::EventManager &event_manager) override;
 

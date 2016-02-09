@@ -20,7 +20,7 @@ struct Display {
   TCODConsole *statusBarView;
 
   Display(int width = 80, int height = 40, int camera_x = 0, int camera_y = 0)
-      : width(width), height(height), camera_x(camera_x), camera_y(camera_y) {}
+      : width(width), height(height), camera_x(camera_x), camera_y(camera_y) { }
 
   void init(void);
   void clear();

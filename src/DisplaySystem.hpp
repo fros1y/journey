@@ -7,13 +7,13 @@
 #include "World.hpp"
 #include "events.hpp"
 
-struct DisplaySystem : entityx::System<DisplaySystem>,
-                       public entityx::Receiver<DisplaySystem> {
+struct DisplaySystem: entityx::System<DisplaySystem>,
+                      public entityx::Receiver<DisplaySystem> {
   std::shared_ptr<Display> display;
   std::shared_ptr<World> world;
 
   DisplaySystem(std::shared_ptr<Display> display, std::shared_ptr<World> world)
-      : display(display), world(world) {}
+      : display(display), world(world) { }
 
   void configure(entityx::EventManager &event_manager) override;
 
