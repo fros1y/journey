@@ -25,7 +25,7 @@ struct Display {
   void init(void);
   void clear();
 
-  void drawEntity(int x, int y, Glyph g, TCODColor color = TCODColor::white);
+  void drawEntity(const int x, const int y, const Glyph g, const TCODColor &color = TCODColor::white);
 
   void statusBar(std::shared_ptr<World> world);
 

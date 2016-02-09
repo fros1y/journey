@@ -84,11 +84,7 @@ bool Map::obstructs(int x, int y) {
     auto e = get(x, y);
     if (!e) return false;
     entityx::ComponentHandle<Obstruction> ob = e.component<Obstruction>();
-    if (ob && ob->obstructs) {
-        return true;
-    } else {
-        return false;
-    }
+    return ob && ob->obstructs;
 }
 
 entityx::Entity Map::get(int x, int y) { return tiles[width * y + x]; }
@@ -141,8 +137,6 @@ void Map::addMonsters() {
         enemy.assign<Attackable>();
     }
 }
-
-void Map::generateCavern() { }
 
 void Map::generateArena() {
     for (auto i = 0; i < height; ++i) {

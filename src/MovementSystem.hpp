@@ -8,10 +8,6 @@
 #include "events.hpp"
 
 bool obstructsTest(entityx::Entity e);
-bool NPCTest(entityx::Entity e);
-
-int npc_filter(std::vector<entityx::Entity> &results,
-               std::vector<entityx::Entity> input);
 
 struct MovementSystem : entityx::System<MovementSystem>,
                         public entityx::Receiver<MovementSystem> {

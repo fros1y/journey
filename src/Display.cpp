@@ -18,7 +18,7 @@ void Display::clear() {
     statusBarView->clear();
 }
 
-void Display::drawEntity(int x, int y, Glyph g, TCODColor color) {
+void Display::drawEntity(const int x, const int y, const Glyph g, const TCODColor &color) {
     int sc_x = x - camera_x;
     int sc_y = y - camera_y;
     levelView->putChar(sc_x, sc_y, g);

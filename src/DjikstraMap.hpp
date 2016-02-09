@@ -8,19 +8,19 @@ struct DjikstraMap {
   int height;
   std::vector<int> cells;
 
-  DjikstraMap(int width, int height)
+  DjikstraMap(const int width, const int height)
       : width(width), height(height), cells(width * height, 9999) {}
 
-  void calculate(int d_x, int d_y);
-  void nextStepFrom(int x, int y, int &n_x, int &n_y);
-  bool canReachFrom(int x, int y);
-  void setProperties(int x, int y, bool traversable);
+  void calculate(const int d_x, const int d_y);
+  void nextStepFrom(const int x, const int y, int &n_x, int &n_y);
+  bool canReachFrom(const int x, const int y);
+  void setProperties(const int x, const int y, const bool traversable);
 
-  int get(int x, int y) {
+  int get(const int x, const int y) {
     if (x < 0 || y < 0 || x > width || y > height) return 9999;
     return cells[width * y + x];
   }
 
-  void set(int x, int y, int v) { cells[width * y + x] = v; }
+  void set(const int x, const int y, const int v) { cells[width * y + x] = v; }
 };
 #endif

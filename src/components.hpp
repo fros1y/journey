@@ -11,7 +11,7 @@ struct LightSource {
     int brightness;
     TCODColor color;
 
-    LightSource(int brightness = 3, TCODColor color = TCODColor::lightYellow) : brightness(brightness), color(color) { }
+    LightSource(const int brightness = 3, const TCODColor &color = TCODColor::lightYellow) : brightness(brightness), color(color) { }
 };
 
 struct Attackable {
@@ -23,19 +23,19 @@ struct Render {
     TCODColor color;
     bool known;
 
-    Render(Glyph glyph, TCODColor color = TCODColor::white) : glyph(glyph), color(color), known(false) { }
+    Render(const Glyph glyph, const TCODColor &color = TCODColor::white) : glyph(glyph), color(color), known(false) { }
 };
 
 struct Position {
-    Position(int x = 0, int y = 0) : x(x), y(y) { }
+    Position(const int x = 0, const int y = 0) : x(x), y(y) { }
 
     int x, y;
 };
 
 struct Health {
-    Health(int maxHP, int currHP) : maxHP(maxHP), currHP(currHP) { }
+    Health(const int maxHP, const int currHP) : maxHP(maxHP), currHP(currHP) { }
 
-    Health(int HP) : Health(HP, HP) { }
+    Health(const int HP) : Health(HP, HP) { }
 
     int maxHP;
     int currHP;
@@ -46,7 +46,7 @@ struct AI {
     bool stationary;
     bool unique;
 
-    AI(std::string name, bool stationary = false, bool unique = false) : name(name), stationary(stationary),
+    AI(const std::string name, const bool stationary = false, const bool unique = false) : name(name), stationary(stationary),
                                                                          unique(unique) { }
 };
 
@@ -54,7 +54,7 @@ struct Obstruction {
     bool obstructs;
     bool blocksView;
 
-    Obstruction(bool obstructs = true, bool blocksView = true)
+    Obstruction(const bool obstructs = true, const bool blocksView = true)
             : obstructs(obstructs), blocksView(blocksView) { }
 };
 

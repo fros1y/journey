@@ -1,7 +1,7 @@
 #include "DjikstraMap.hpp"
 #include "utils.h"
 
-void DjikstraMap::calculate(int d_x, int d_y) {
+void DjikstraMap::calculate(const int d_x, const int d_y) {
   bool changeMade = true;
   set(d_x, d_y, 0);
 
@@ -33,7 +33,7 @@ void DjikstraMap::calculate(int d_x, int d_y) {
   // }
 }
 
-void DjikstraMap::nextStepFrom(int x, int y, int &n_x, int &n_y) {
+void DjikstraMap::nextStepFrom(const int x, const int y, int &n_x, int &n_y) {
   n_x = x;
   n_y = y;
 
@@ -75,9 +75,9 @@ void DjikstraMap::nextStepFrom(int x, int y, int &n_x, int &n_y) {
   // printf("[%i,%i]=>[%i, %i]\n", x, y, n_x, n_y);
 }
 
-bool DjikstraMap::canReachFrom(int x, int y) { return true; }
+bool DjikstraMap::canReachFrom(const int x, const int y) { return true; }
 
-void DjikstraMap::setProperties(int x, int y, bool traversable) {
+void DjikstraMap::setProperties(const int x, const int y, const bool traversable) {
   if (traversable)
     set(x, y, 999);
   else

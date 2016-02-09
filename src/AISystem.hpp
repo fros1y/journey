@@ -20,23 +20,23 @@ struct AISystem : entityx::System<AISystem> {
   void update(entityx::EntityManager &es, entityx::EventManager &events,
               entityx::TimeDelta dt) override;
 
-  void randomMotion(entityx::Entity e);
-  void zombieMotion(entityx::Entity e);
-  void basicMotion(entityx::Entity e);
+  void randomMotion(entityx::Entity &e);
+  void zombieMotion(entityx::Entity &e);
+  void basicMotion(entityx::Entity &e);
 
   bool failMoraleCheck();
   bool canMoveAway();
   void moveAway();
   bool hasRangedAttack();
-  bool canMoveToward(entityx::Entity e);
+  bool canMoveToward(entityx::Entity &e);
   bool decideToCharge();
-  void moveToward(entityx::Entity e);
+  void moveToward(entityx::Entity &e);
   void rangedAttack();
   bool canAttack();
   bool decideToRetreat();
   void attack();
   void wait();
-  bool canSee(entityx::Entity e);
+  bool canSee(entityx::Entity &e);
 };
 
 #endif

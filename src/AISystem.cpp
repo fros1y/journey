@@ -18,7 +18,7 @@ void AISystem::moveAway() { }
 
 bool AISystem::hasRangedAttack() { return false; }
 
-bool AISystem::canMoveToward(entityx::Entity e) {
+bool AISystem::canMoveToward(entityx::Entity &e) {
     entityx::ComponentHandle<Position> AI_pos = e.component<Position>();
     entityx::ComponentHandle<AI> ai = e.component<AI>();
     if (ai && !ai->stationary)
@@ -29,10 +29,8 @@ bool AISystem::canMoveToward(entityx::Entity e) {
 
 bool AISystem::decideToCharge() { return false; }
 
-void AISystem::moveToward(entityx::Entity e) {
+void AISystem::moveToward(entityx::Entity &e) {
     entityx::ComponentHandle<Position> AI_pos = e.component<Position>();
-    // world->currLevel->djikstra_map->setPath(AI_pos->x, AI_pos->y);
-    // world->currLevel->djikstra_map->reverse();
     int g_x, g_y;
     world->currLevel->nextStepFrom(AI_pos->x, AI_pos->y, g_x, g_y);
     world->events.emit<Movement>(e, g_x - AI_pos->x, g_y - AI_pos->y);
@@ -48,13 +46,13 @@ void AISystem::attack() { }
 
 void AISystem::wait() { }
 
-bool AISystem::canSee(entityx::Entity e) {
+bool AISystem::canSee(entityx::Entity &e) {
     entityx::ComponentHandle<Position> entity_pos = e.component<Position>();
     world->currLevel->computeFoVFrom(entity_pos->x, entity_pos->y, 5);
     return world->currLevel->isInFoV(target_x, target_y);
 }
 
-void AISystem::basicMotion(entityx::Entity e) {
+void AISystem::basicMotion(entityx::Entity &e) {
     world->currLevel->calculateMaps();
     world->currLevel->computeMovesTo(target_x, target_y);
 
@@ -84,13 +82,13 @@ void AISystem::basicMotion(entityx::Entity e) {
     // }
 }
 
-void AISystem::randomMotion(entityx::Entity e) {
+void AISystem::randomMotion(entityx::Entity &e) {
     int d_x = world->rnd->getInt(-1, 1);
     int d_y = world->rnd->getInt(-1, 1);
     world->events.emit<Movement>(e, d_x, d_y);
 }
 
-void AISystem::zombieMotion(entityx::Entity e) {
+void AISystem::zombieMotion(entityx::Entity &e) {
     int d_x = 0;
     int d_y = 0;
     entityx::ComponentHandle<Position> entity_pos = e.component<Position>();

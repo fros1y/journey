@@ -42,9 +42,8 @@ struct Map {
   void makeLightSource(int x, int y, int brightness = 6, TCODColor color = TCODColor::yellow);
 
   void generateArena();
-  void generateCavern();
 
-  void addMonsters();
+    void addMonsters();
 
   void calculateMaps();
 
