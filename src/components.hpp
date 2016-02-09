@@ -20,10 +20,10 @@ struct Attackable {
 
 struct Render {
     Glyph glyph;
-    bool known;
     TCODColor color;
+    bool known;
 
-    Render(Glyph glyph) : glyph(glyph), known(false), color(TCODColor::white) { }
+    Render(Glyph glyph, TCODColor color = TCODColor::white) : glyph(glyph), color(color), known(false) { }
 };
 
 struct Position {
@@ -43,9 +43,11 @@ struct Health {
 
 struct AI {
     std::string name;
+    bool stationary;
     bool unique;
 
-    AI(std::string name, bool unique = false) : name(name), unique(unique) { }
+    AI(std::string name, bool stationary = false, bool unique = false) : name(name), stationary(stationary),
+                                                                         unique(unique) { }
 };
 
 struct Obstruction {
