@@ -58,7 +58,7 @@ void Map::calculateMaps() {
             walkable = !(ob->obstructs);
             transparent = !(ob->blocksView);
         }
-        tcod_map->setProperties(position.x, position.y, walkable, transparent);
+        tcod_map->setProperties(position.x, position.y, transparent, walkable);
         d_map->setProperties(position.x, position.y, walkable);
     });
 
@@ -125,6 +125,21 @@ void Map::addMonsters() {
         enemy.assign<Health>(5);
         enemy.assign<Attackable>();
     }
+
+    for (auto i = 0; i < 25; ++i) {
+        int m_x, m_y;
+        m_x = world->rnd->getInt(0, width);
+        m_y = world->rnd->getInt(0, height);
+
+        auto enemy = world->entities.create();
+        enemy.assign<Position>(m_x, m_y);
+        enemy.assign<Obstruction>(true, false);
+        enemy.assign<Render>(',', TCODColor::blue);
+        enemy.assign<LightSource>(2, TCODColor::lightBlue);
+        enemy.assign<AI>("mushroom", true);
+        enemy.assign<Health>(1);
+        enemy.assign<Attackable>();
+    }
 }
 
 void Map::generateCavern() { }
@@ -139,7 +154,7 @@ void Map::generateArena() {
                 makeBlock(j, i);
             }
             if (i % 14 == 0 && j % 14 == 0) {
-                makeLightSource(j, i, 2, TCODColor::lightBlue);
+                makeLightSource(j, i, 2, TCODColor::lightRed);
             }
         }
     }
