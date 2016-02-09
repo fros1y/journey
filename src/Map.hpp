@@ -39,7 +39,7 @@ struct Map {
 
   void makeBlock(int x, int y);
   void makeFloor(int x, int y);
-  void makeLightSource(int x, int y, int brightness = 6);
+  void makeLightSource(int x, int y, int brightness = 6, TCODColor color = TCODColor::yellow);
 
   void generateArena();
   void generateCavern();

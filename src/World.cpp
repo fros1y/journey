@@ -19,7 +19,7 @@ void World::setupPlayer() {
   player.assign<Obstruction>();
   player.assign<Render>('@');
   player.assign<Attackable>();
-  player.assign<LightSource>(5);
+  player.assign<LightSource>(5, TCODColor::lighterYellow);
 }
 
 void World::startSystems(std::shared_ptr<Display> d) {

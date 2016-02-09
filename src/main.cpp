@@ -38,7 +38,6 @@ void gameLoop(std::shared_ptr<World> world, std::shared_ptr<Display> display) {
       default:
         world->updateDisplayOnly();
         continue;
-        break;
     }
 
     if ((d_x != 0) or (d_y != 0)) {
