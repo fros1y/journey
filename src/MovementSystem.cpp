@@ -55,7 +55,6 @@ void MovementSystem::receive(const Movement &move) {
         entitiesAtDest.cbegin(), entitiesAtDest.cend(),
         [](entityx::Entity e) { return obstructsTest(e); })) {
       obstruction = true;
-      world->events.emit<Message>("Bump!");
     }
   }
 

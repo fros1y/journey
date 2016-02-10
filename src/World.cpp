@@ -18,6 +18,7 @@ void World::setupPlayer() {
   player.assign<Health>(1000);
   player.assign<Obstruction>();
   player.assign<Render>('@');
+  player.assign<Name>("Rodney", true);
   player.assign<Attackable>();
   player.assign<LightSource>(3, TCODColor::lighterYellow);
 }

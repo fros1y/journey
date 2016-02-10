@@ -1,4 +1,6 @@
+#include <string>
 #include "DisplaySystem.hpp"
+#include <sstream>
 
 void DisplaySystem::configure(entityx::EventManager &event_manager) {
   event_manager.subscribe<Message>(*this);
@@ -10,6 +12,7 @@ void DisplaySystem::update(entityx::EntityManager &es,
   display->clear();
 
   display->statusBar(world);
+  display->showMessages();
 
   entityx::ComponentHandle<Position> position =
       world->player.component<Position>();
@@ -34,5 +37,7 @@ void DisplaySystem::update(entityx::EntityManager &es,
 }
 
 void DisplaySystem::receive(const Message &mesg) {
-  printf("%s\n", mesg.text.c_str());
+  std::stringstream ss;
+  ss << "[" << world->turnCount << "] " << mesg.text;
+  display->addMessage(ss.str());
 }

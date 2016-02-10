@@ -119,7 +119,8 @@ void Map::addMonsters() {
     enemy.assign<Position>(m_x, m_y);
     enemy.assign<Obstruction>(true, false);
     enemy.assign<Render>('r');
-    enemy.assign<AI>("rat");
+    enemy.assign<AI>();
+    enemy.assign<Name>("rat");
     enemy.assign<Health>(5);
     enemy.assign<Attackable>();
   }
@@ -134,7 +135,8 @@ void Map::addMonsters() {
     enemy.assign<Obstruction>(true, false);
     enemy.assign<Render>(',', TCODColor::blue);
     enemy.assign<LightSource>(1, TCODColor::lightBlue);
-    enemy.assign<AI>("mushroom", true);
+    enemy.assign<AI>(true);
+    enemy.assign<Name>("mushroom");
     enemy.assign<Health>(1);
     enemy.assign<Attackable>();
   }
