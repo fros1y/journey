@@ -9,8 +9,8 @@ void Display::init(void) {
 
   TCODConsole::initRoot(width, height, "Journey", false);
 
-  levelView = new TCODConsole(width, height - 1);
-  statusBarView = new TCODConsole(width, 1);
+  levelView = std::make_shared<TCODConsole>(width, height - 1);
+  statusBarView = std::make_shared<TCODConsole>(width, 1);
 }
 
 void Display::clear() {
@@ -36,8 +36,8 @@ void Display::statusBar(std::shared_ptr<World> world) {
 }
 
 void Display::render() {
-  TCODConsole::blit(levelView, 0, 0, 0, 0, TCODConsole::root, 0, 0);
-  TCODConsole::blit(statusBarView, 0, 0, 0, 0, TCODConsole::root, 0,
+  TCODConsole::blit(levelView.get(), 0, 0, 0, 0, TCODConsole::root, 0, 0);
+  TCODConsole::blit(statusBarView.get(), 0, 0, 0, 0, TCODConsole::root, 0,
                     height - 1);
   TCODConsole::flush();
 }

@@ -16,8 +16,8 @@ struct Display {
   int camera_x;
   int camera_y;
 
-  TCODConsole *levelView;
-  TCODConsole *statusBarView;
+  std::shared_ptr<TCODConsole> levelView;
+  std::shared_ptr<TCODConsole> statusBarView;
 
   Display(int width = 80, int height = 40, int camera_x = 0, int camera_y = 0)
       : width(width), height(height), camera_x(camera_x), camera_y(camera_y) { }
@@ -31,10 +31,6 @@ struct Display {
 
   void render();
 
-  ~Display() {
-    delete levelView;
-    delete statusBarView;
-  }
 };
 
 #endif
