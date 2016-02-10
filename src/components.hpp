@@ -8,10 +8,10 @@
 typedef char Glyph;
 
 struct LightSource {
-  int brightness;
+  float brightness;
   TCODColor color;
 
-  LightSource(const int brightness = 3, const TCODColor &color = TCODColor::lightYellow)
+  LightSource(const float brightness = 1, const TCODColor &color = TCODColor::lightYellow)
       : brightness(brightness), color(color) { }
 };
 

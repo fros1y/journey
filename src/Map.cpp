@@ -1,6 +1,6 @@
 #include "Map.hpp"
 
-void Map::makeLightSource(int x, int y, int brightness, TCODColor color) {
+void Map::makeLightSource(int x, int y, float brightness, TCODColor color) {
   auto light = world->entities.create();
   light.assign<Position>(x, y);
   light.assign<LightSource>(brightness, color);
@@ -68,16 +68,14 @@ void Map::calculateMaps() {
 void Map::calculateLighting() const {
   world->entities.each<LightSource, Position>(
       [this](entityx::Entity entity, LightSource &l, Position &position) {
-        world->currLevel->computeFoVFrom(position.x, position.y, l.brightness);
+        world->currLevel->computeFoVFrom(position.x, position.y, 0);
         for (auto i = 0; i < width; i++) {
           for (auto j = 0; j < height; j++) {
             if (world->currLevel->isInFoV(i, j)) {
-              l_map->setLight(i, j, 1);
-              TCODColor newColor;
-              if (l_map->getColor(i, j) != TCODColor::black) {
-                newColor = l_map->getColor(i, j) + l.color;
-              } else newColor = l.color;
-              l_map->setColor(i, j, newColor);
+              float distanceSqr = pow(position.x-i,2.0) + pow(position.y-j,2);
+              if(distanceSqr == 0) distanceSqr = 1;
+              float intensity = l.brightness * (1/distanceSqr);
+              l_map->addColor(i, j, l.color, intensity);
             }
           }
         }
@@ -135,7 +133,7 @@ void Map::addMonsters() {
     enemy.assign<Position>(m_x, m_y);
     enemy.assign<Obstruction>(true, false);
     enemy.assign<Render>(',', TCODColor::blue);
-    enemy.assign<LightSource>(2, TCODColor::lightBlue);
+    enemy.assign<LightSource>(1, TCODColor::lightBlue);
     enemy.assign<AI>("mushroom", true);
     enemy.assign<Health>(1);
     enemy.assign<Attackable>();
