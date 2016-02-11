@@ -20,21 +20,43 @@ void gameLoop(std::shared_ptr<World> world, std::shared_ptr<Display> display) {
   int d_y = 0;
 
   TCODConsole::setKeyboardRepeat(200, 200);
-  while (!TCODConsole::isWindowClosed()) {
+  TCODSystem::setFps(30);
+
+  bool quit = false;
+
+  while (!TCODConsole::isWindowClosed() && !quit) {
     TCOD_key_t key = TCODConsole::checkForKeypress();
-    switch (key.vk) {
-      case TCODK_UP:
+    switch (key.c) {
+      case 'k':
         d_y = -1;
         break;
-      case TCODK_DOWN:
+      case 'j':
         d_y = 1;
         break;
-      case TCODK_LEFT:
+      case 'h':
         d_x = -1;
         break;
-      case TCODK_RIGHT:
+      case 'l':
         d_x = 1;
         break;
+      case 'y':
+        d_y = -1;
+        d_x = -1;
+        break;
+      case 'u':
+        d_y = -1;
+        d_x = 1;
+        break;
+      case 'n':
+        d_y = 1;
+        d_x = -1;
+        break;
+      case 'm':
+        d_y = 1;
+        d_x = 1;
+        break;
+      case 'q':
+        quit=true;
       default:
         world->updateDisplayOnly();
         continue;
