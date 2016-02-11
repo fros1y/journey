@@ -52,8 +52,10 @@ struct Name {
 
 struct AI {
   AIType strategy;
-  AI(const AIType strategy = AIType::Basic)
-      : strategy(strategy) { }
+  int ap;
+  int speed;
+  AI(const AIType strategy = AIType::Basic, int speed = 100)
+      : strategy(strategy), ap(speed), speed(speed) { }
 };
 
 struct Obstruction {

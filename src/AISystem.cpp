@@ -8,17 +8,22 @@ void AISystem::update(entityx::EntityManager &es, entityx::EventManager &events,
   target_y = player_pos->y;
 
   es.each<AI>([this](entityx::Entity entity, AI &ai) {
-    switch(ai.strategy) {
-      case AIType::Basic:
-        basicAI(entity);
-        break;
-      case AIType::Random:
-        randomAI(entity);
-        break;
-      case AIType::Stationary:
-        stationaryAI(entity);
-        break;
-    }});
+    while (ai.ap >= 100) {
+      switch (ai.strategy) {
+        case AIType::Basic:
+          basicAI(entity);
+          break;
+        case AIType::Random:
+          randomAI(entity);
+          break;
+        case AIType::Stationary:
+          stationaryAI(entity);
+          break;
+      }
+      ai.ap -= 100;
+    }
+    ai.ap += ai.speed;
+  });
 }
 
 bool AISystem::failMoraleCheck() { return false; }
@@ -31,7 +36,7 @@ bool AISystem::hasRangedAttack() { return false; }
 
 bool AISystem::canMoveToward(entityx::Entity &e) {
   entityx::ComponentHandle<Position> AI_pos = e.component<Position>();
-    return world->currLevel->canReachFrom(AI_pos->x, AI_pos->y);
+  return world->currLevel->canReachFrom(AI_pos->x, AI_pos->y);
 }
 
 bool AISystem::decideToCharge() { return false; }
@@ -60,7 +65,7 @@ bool AISystem::canSee(entityx::Entity &e) {
 }
 
 void AISystem::stationaryAI(entityx::Entity &e) {
-  if(canSee(e) && canAttack()) {
+  if (canSee(e) && canAttack()) {
     attack();
   }
 }
