@@ -7,6 +7,8 @@
 
 typedef char Glyph;
 
+enum class AIType {Basic, Random, Stationary};
+
 struct LightSource {
   float brightness;
   TCODColor color;
@@ -49,9 +51,9 @@ struct Name {
 };
 
 struct AI {
-  bool stationary;
-  AI(const bool stationary = false)
-      : stationary(stationary) { }
+  AIType strategy;
+  AI(const AIType strategy = AIType::Basic)
+      : strategy(strategy) { }
 };
 
 struct Obstruction {

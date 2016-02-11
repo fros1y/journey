@@ -9,6 +9,7 @@
 #include "components.hpp"
 #include "events.hpp"
 
+
 struct AISystem: entityx::System<AISystem> {
   std::shared_ptr<World> world;
 
@@ -20,9 +21,9 @@ struct AISystem: entityx::System<AISystem> {
   void update(entityx::EntityManager &es, entityx::EventManager &events,
               entityx::TimeDelta dt) override;
 
-  void randomMotion(entityx::Entity &e);
-  void zombieMotion(entityx::Entity &e);
-  void basicMotion(entityx::Entity &e);
+  void randomAI(entityx::Entity &e);
+  void basicAI(entityx::Entity &e);
+  void stationaryAI(entityx::Entity &e);
 
   bool failMoraleCheck();
   bool canMoveAway();

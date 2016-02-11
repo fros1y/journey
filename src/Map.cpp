@@ -72,7 +72,7 @@ void Map::calculateLighting() const {
         for (auto i = 0; i < width; i++) {
           for (auto j = 0; j < height; j++) {
             if (world->currLevel->isInFoV(i, j)) {
-              float distanceSqr = pow(position.x-i,2.0) + pow(position.y-j,2);
+              double distanceSqr = pow(position.x-i,2.0) + pow(position.y-j,2);
               if(distanceSqr == 0) distanceSqr = 1;
               float intensity = l.brightness * (1/distanceSqr);
               l_map->addColor(i, j, l.color, intensity);
@@ -135,7 +135,7 @@ void Map::addMonsters() {
     enemy.assign<Obstruction>(true, false);
     enemy.assign<Render>(',', TCODColor::blue);
     enemy.assign<LightSource>(1, TCODColor::lightBlue);
-    enemy.assign<AI>(true);
+    enemy.assign<AI>(AIType::Stationary);
     enemy.assign<Name>("mushroom");
     enemy.assign<Health>(1);
     enemy.assign<Attackable>();
