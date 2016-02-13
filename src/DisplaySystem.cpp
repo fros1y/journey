@@ -9,8 +9,12 @@ void DisplaySystem::configure(entityx::EventManager &event_manager) {
 void DisplaySystem::update(entityx::EntityManager &es,
                            entityx::EventManager &events,
                            entityx::TimeDelta dt) {
-  display->clear();
 
+  if (calculatedForTurn == world->turnCount)
+    return;
+  calculatedForTurn = world->turnCount;
+
+  display->clear();
   display->statusBar(world);
   display->showMessages();
 
@@ -34,6 +38,7 @@ void DisplaySystem::update(entityx::EntityManager &es,
 
   display->drawEntity(position->x, position->y, '@', TCODColor::white);
   display->render();
+  calculatedForTurn = world->turnCount;
 }
 
 void DisplaySystem::receive(const Message &mesg) {

@@ -24,6 +24,8 @@ struct LightMap {
   void addColor(int x, int y, TCODColor c, float brightness) {
     lightColor[width * y + x] = lightColor[width * y + x] + c * brightness;
   }
+
+  void clear();
 };
 
 #endif  // LIGHTMAP_HPP

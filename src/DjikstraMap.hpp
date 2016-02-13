@@ -22,5 +22,7 @@ struct DjikstraMap {
   }
 
   void set(const int x, const int y, const int v) { cells[width * y + x] = v; }
+
+  void clear();
 };
 #endif

@@ -37,7 +37,11 @@ struct Map {
         width(width),
         height(height),
         calculatedForTurn(-1),
-        tiles(width * height) { }
+        tiles(width * height) {
+    tcod_map = std::make_shared<TCODMap>(width, height);
+    d_map = std::make_shared<DjikstraMap>(width, height);
+    l_map = std::make_shared<LightMap>(width, height);
+  }
 
   void makeBlock(int x, int y);
   void makeFloor(int x, int y);

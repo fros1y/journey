@@ -83,3 +83,7 @@ void DjikstraMap::setProperties(const int x, const int y, const bool traversable
   else
     set(x, y, 9999);
 }
+
+void DjikstraMap::clear() {
+  std::fill(cells.begin(), cells.end(), 9999);
+}

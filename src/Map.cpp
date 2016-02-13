@@ -37,17 +37,13 @@ bool Map::canReachFrom(int x, int y) { return d_map->canReachFrom(x, y); }
 
 void Map::calculateMaps() {
   // We only need to recalculate when the turn advances.
-  if (calculatedForTurn != world->turnCount) {
-    calculatedForTurn = world->turnCount;
-    if (tcod_map) tcod_map = nullptr;
-    if (d_map) d_map = nullptr;
-    if (l_map) l_map = nullptr;
-  } else
+  if (calculatedForTurn == world->turnCount)
     return;
 
-  tcod_map = std::make_shared<TCODMap>(width, height);
-  d_map = std::make_shared<DjikstraMap>(width, height);
-  l_map = std::make_shared<LightMap>(width, height);
+  calculatedForTurn = world->turnCount;
+  tcod_map->clear();
+  d_map->clear();
+  l_map->clear();
 
   world->entities.each<Position>([this](entityx::Entity entity,
                                         Position &position) {
@@ -72,12 +68,12 @@ void Map::calculateLighting() const {
       [this, MIN_INTENSITY](entityx::Entity entity, LightSource &l, Position &position) {
         world->currLevel->computeFoVFrom(position.x, position.y, 0);
         auto delta = int(sqrt(l.brightness / MIN_INTENSITY));
-        for (auto i = clamp(position.x - delta, 0, width); i < clamp(position.x + delta, 0, width) ; i++) {
+        for (auto i = clamp(position.x - delta, 0, width); i < clamp(position.x + delta, 0, width); i++) {
           for (auto j = clamp(position.y - delta, 0, width); j < clamp(position.y + delta, 0, width); j++) {
             if (world->currLevel->isInFoV(i, j)) {
-              double distanceSqr = clamp(pow(position.x-i,2.0) + pow(position.y-j,2), 1.0, 1e10);
-              float intensity = l.brightness * (1/distanceSqr);
-              if(intensity > MIN_INTENSITY)
+              double distanceSqr = clamp(pow(position.x - i, 2.0) + pow(position.y - j, 2), 1.0, 1e10);
+              float intensity = l.brightness * (1 / distanceSqr);
+              if (intensity > MIN_INTENSITY)
                 l_map->addColor(i, j, l.color, intensity);
             }
           }

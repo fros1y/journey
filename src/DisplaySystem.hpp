@@ -11,9 +11,10 @@ struct DisplaySystem: entityx::System<DisplaySystem>,
                       public entityx::Receiver<DisplaySystem> {
   std::shared_ptr<Display> display;
   std::shared_ptr<World> world;
+  int calculatedForTurn;
 
   DisplaySystem(std::shared_ptr<Display> display, std::shared_ptr<World> world)
-      : display(display), world(world) { }
+      : display(display), world(world), calculatedForTurn(-1) { }
 
   void configure(entityx::EventManager &event_manager) override;
 
