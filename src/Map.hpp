@@ -9,6 +9,7 @@
 #include "DjikstraMap.hpp"
 #include "LightMap.hpp"
 #include "World.hpp"
+#include "components.hpp"
 
 struct Map {
   std::shared_ptr<World> world;
@@ -21,13 +22,14 @@ struct Map {
   std::shared_ptr<DjikstraMap> d_map;
   std::shared_ptr<LightMap> l_map;
 
+  std::unordered_multimap<Position, std::shared_ptr< entityx::Entity > > entities;
+
   std::vector<entityx::Entity> tiles;
 
   entityx::Entity get(int x, int y);
   void set(int x, int y, entityx::Entity e);
   void floodFill(int x, int y, std::function<void(int, int)> &builder);
 
-  bool obstructs(int x, int y);
   bool populated(int x, int y);
 
   Map(std::shared_ptr<World> world, int width, int height)

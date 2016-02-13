@@ -1,4 +1,5 @@
 #include "Map.hpp"
+#include "utils.h"
 
 void Map::makeLightSource(int x, int y, float brightness, TCODColor color) {
   auto light = world->entities.create();
@@ -66,27 +67,22 @@ void Map::calculateMaps() {
 }
 
 void Map::calculateLighting() const {
+  const float MIN_INTENSITY = 0.05;
   world->entities.each<LightSource, Position>(
-      [this](entityx::Entity entity, LightSource &l, Position &position) {
+      [this, MIN_INTENSITY](entityx::Entity entity, LightSource &l, Position &position) {
         world->currLevel->computeFoVFrom(position.x, position.y, 0);
-        for (auto i = 0; i < width; i++) {
-          for (auto j = 0; j < height; j++) {
+        auto delta = int(sqrt(l.brightness / MIN_INTENSITY));
+        for (auto i = clamp(position.x - delta, 0, width); i < clamp(position.x + delta, 0, width) ; i++) {
+          for (auto j = clamp(position.y - delta, 0, width); j < clamp(position.y + delta, 0, width); j++) {
             if (world->currLevel->isInFoV(i, j)) {
-              double distanceSqr = pow(position.x-i,2.0) + pow(position.y-j,2);
-              if(distanceSqr == 0) distanceSqr = 1;
+              double distanceSqr = clamp(pow(position.x-i,2.0) + pow(position.y-j,2), 1.0, 1e10);
               float intensity = l.brightness * (1/distanceSqr);
-              l_map->addColor(i, j, l.color, intensity);
+              if(intensity > MIN_INTENSITY)
+                l_map->addColor(i, j, l.color, intensity);
             }
           }
         }
       });
-}
-
-bool Map::obstructs(int x, int y) {
-  auto e = get(x, y);
-  if (!e) return false;
-  entityx::ComponentHandle<Obstruction> ob = e.component<Obstruction>();
-  return ob && ob->obstructs;
 }
 
 entityx::Entity Map::get(int x, int y) { return tiles[width * y + x]; }
@@ -119,7 +115,8 @@ void Map::addMonsters() {
     enemy.assign<Position>(m_x, m_y);
     enemy.assign<Obstruction>(true, false);
     enemy.assign<Render>('r');
-    enemy.assign<AI>(AIType::Basic, 200);
+    enemy.assign<AI>(AIType::Basic);
+    enemy.assign<Speed>(2.0);
     enemy.assign<Name>("rat");
     enemy.assign<Health>(5);
     enemy.assign<Attackable>();
@@ -135,7 +132,8 @@ void Map::addMonsters() {
     enemy.assign<Obstruction>(true, false);
     enemy.assign<Render>(',', TCODColor::blue);
     enemy.assign<LightSource>(1, TCODColor::lightBlue);
-    enemy.assign<AI>(AIType::Basic, 10);
+    enemy.assign<AI>(AIType::Basic);
+    enemy.assign<Speed>(0.1);
     enemy.assign<Name>("mushroom");
     enemy.assign<Health>(1);
     enemy.assign<Attackable>();
