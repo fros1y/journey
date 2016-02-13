@@ -31,9 +31,24 @@ struct Render {
 
 struct Position {
   Position(const int x = 0, const int y = 0) : x(x), y(y) { }
-
   int x, y;
+
+  bool operator==(const Position &that) const
+  {
+    return (x == that.x && y == that.y);
+  }
 };
+
+namespace std {
+template <>
+struct hash<Position>
+{
+  size_t operator()(const Position& p) const
+  {
+    return(p.x * 24593 + p.y);
+  }
+};
+}
 
 struct Health {
   Health(const int maxHP, const int currHP) : maxHP(maxHP), currHP(currHP) { }
@@ -50,12 +65,16 @@ struct Name {
   Name(const std::string &name, const bool unique=false) : name(name), unique(unique) {}
 };
 
+struct Speed {
+  float ap;
+  float speed;
+  Speed(const float speed = 1.0): ap(speed), speed(speed) {}
+};
+
 struct AI {
   AIType strategy;
-  int ap;
-  int speed;
-  AI(const AIType strategy = AIType::Basic, int speed = 100)
-      : strategy(strategy), ap(speed), speed(speed) { }
+  AI(const AIType strategy = AIType::Basic)
+      : strategy(strategy) { }
 };
 
 struct Obstruction {

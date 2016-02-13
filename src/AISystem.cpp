@@ -6,9 +6,10 @@ void AISystem::update(entityx::EntityManager &es, entityx::EventManager &events,
       world->player.component<Position>();
   target_x = player_pos->x;
   target_y = player_pos->y;
+  auto player_speed = world->player.component<Speed>();
 
-  es.each<AI>([this](entityx::Entity entity, AI &ai) {
-    while (ai.ap >= 100) {
+  es.each<AI,Speed>([this, player_speed](entityx::Entity entity, AI &ai, Speed &speed) {
+    while (speed.ap > 1.0) {
       switch (ai.strategy) {
         case AIType::Basic:
           basicAI(entity);
@@ -20,9 +21,9 @@ void AISystem::update(entityx::EntityManager &es, entityx::EventManager &events,
           stationaryAI(entity);
           break;
       }
-      ai.ap -= 100;
+      speed.ap -= 1;
     }
-    ai.ap += ai.speed;
+    speed.ap += speed.speed / player_speed->speed;
   });
 }
 

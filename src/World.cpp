@@ -20,6 +20,7 @@ void World::setupPlayer() {
   player.assign<Render>('@');
   player.assign<Name>("Rodney", true);
   player.assign<Attackable>();
+  player.assign<Speed>(1.0);
   player.assign<LightSource>(3, TCODColor::lighterYellow);
 }
 
