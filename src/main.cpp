@@ -57,6 +57,7 @@ void gameLoop(std::shared_ptr<World> world, std::shared_ptr<Display> display) {
         break;
       case 'q':
         quit=true;
+        break;
       default:
         world->updateDisplayOnly();
         continue;
