@@ -1,20 +1,20 @@
 #include "World.hpp"
 
 void World::init(std::shared_ptr<Display> d) {
-  rnd = new TCODRandom();
-  setupPlayer();
+  rnd = new TCODRandom(0xdeadbeef);
   generateMap();
+  setupPlayer();
   startSystems(d);
 }
 
 void World::generateMap() {
-  currLevel = std::make_shared<Map>(shared_from_this(), 50, 50);
-  currLevel->generateArena();
+  currLevel = std::make_shared<Map>(shared_from_this(), 100, 100);
+  currLevel->generateLevel();
 }
 
 void World::setupPlayer() {
   player = ECS.entities.create();
-  player.assign<Position>(20, 10);
+  player.assign<Position>(currLevel->width/2, currLevel->height/2);
   player.assign<Health>(1000);
   player.assign<Obstruction>();
   player.assign<Render>('@');
