@@ -21,16 +21,6 @@ void DjikstraMap::calculate(const int d_x, const int d_y) {
       }
     }
   }
-
-  // for (auto i = 0; i < width; i++) {
-  //   for (auto j = 0; j < height; j++) {
-  //     if (get(i, j) == 9999)
-  //       printf("[.]");
-  //     else
-  //       printf("[%i]", get(i, j));
-  //   }
-  //   printf("\n");
-  // }
 }
 
 void DjikstraMap::nextStepFrom(const int x, const int y, int &n_x, int &n_y) {
@@ -71,8 +61,6 @@ void DjikstraMap::nextStepFrom(const int x, const int y, int &n_x, int &n_y) {
     n_x = x - 1;
     n_y = y + 1;
   }
-
-  // printf("[%i,%i]=>[%i, %i]\n", x, y, n_x, n_y);
 }
 
 bool DjikstraMap::canReachFrom(const int x, const int y) { return true; }
