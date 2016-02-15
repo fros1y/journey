@@ -38,7 +38,6 @@ bool MapGen::ellipseFill(int leftMost,
       auto y = j - ycenter;
 
       auto test = (x*x)/(xaxis*xaxis) + (y*y)/(yaxis*yaxis);
-      std::cout << test << std::endl;
       if(test <= .9)
         map[i][j] = Element::Floor;
     }
