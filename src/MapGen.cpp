@@ -13,6 +13,39 @@
 #include <boost/graph/random_layout.hpp>
 #include <boost/graph/make_connected.hpp>
 
+
+bool MapGen::ellipseFill(int leftMost,
+                      int rightMost,
+                      int topMost,
+                      int bottomMost,
+                      Element fill) {
+
+  leftMost = clamp(leftMost, 1, width - 2);
+  rightMost = clamp(rightMost, 1, width - 2);
+  topMost = clamp(topMost, 1, height - 2);
+  bottomMost = clamp(bottomMost, 1, height - 2);
+
+  int xaxis = (rightMost - leftMost) / 2.0;
+  int yaxis = (bottomMost - topMost) / 2.0;
+
+  auto xcenter = (rightMost + leftMost) / 2.0;
+  auto ycenter = (topMost + bottomMost) / 2.0;
+
+  for (auto i : boost::irange(leftMost, rightMost + 1)) {
+    for (auto j : boost::irange(topMost, bottomMost + 1)) {
+
+      auto x = i - xcenter;
+      auto y = j - ycenter;
+
+      auto test = (x*x)/(xaxis*xaxis) + (y*y)/(yaxis*yaxis);
+      std::cout << test << std::endl;
+      if(test <= .9)
+        map[i][j] = Element::Floor;
+    }
+  }
+  return true;
+}
+
 bool MapGen::rectFill(int leftMost,
                       int rightMost,
                       int topMost,
@@ -62,7 +95,7 @@ void MapGen::init() {
   Graph map_graph;
 
   boost::random::mt19937 rng;
-  boost::generate_random_graph(map_graph, 10, 10, rng, true, true);
+  boost::generate_random_graph(map_graph, 30, 30, rng, true, true);
   boost::make_connected(map_graph);
 
   std::pair<edge_iterator, edge_iterator> ei = boost::edges(map_graph);
@@ -100,7 +133,14 @@ bool MapGen::buildRoom(const Room &r) {
   auto rightMost = int(r.center.x + r.width / 2.0);
   auto topMost = int(r.center.y - r.height / 2.0);
   auto bottomMost = int(r.center.y + r.height / 2.0);
-  return rectFill(leftMost, rightMost, topMost, bottomMost, Element::Floor);
+
+  auto rnd = world->rnd->getInt(0, 100);
+  switch(rnd) {
+    case 0 ... 25:
+      return ellipseFill(leftMost, rightMost, topMost, bottomMost, Element::Floor);
+    default:
+      return rectFill(leftMost, rightMost, topMost, bottomMost, Element::Floor);
+  }
 }
 
 bool MapGen::buildCorridor(const Room &r1, const Room &r2) {

@@ -46,6 +46,12 @@ struct MapGen {
     }
   }
 
+  bool ellipseFill(int leftMost,
+                           int rightMost,
+                           int topMost,
+                           int bottomMost,
+                           Element fill);
+
  bool rectFill(
       int ,
       int ,
