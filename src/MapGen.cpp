@@ -2,9 +2,16 @@
 // Created by Martin Galese on 2/13/16.
 //
 
+#include <libtcod.hpp>
 #include "MapGen.hpp"
 #include "utils.h"
 #include <boost/range/irange.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/random.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/graph/random_layout.hpp>
+#include <boost/graph/make_connected.hpp>
 
 bool MapGen::rectFill(int leftMost,
                       int rightMost,
@@ -47,163 +54,80 @@ void MapGen::floodFill(const int x, const int y, const Element fill) {
   if (x < width - 1 && y > 0) floodFill(x + 1, y - 1, fill);
 }
 
-bool MapGen::buildCorridor(const int x, const int y, const Direction grow) {
-  auto length = world->rnd->getInt(4, width / 5);
-
-  int leftMost, rightMost, topMost, bottomMost;
-
-  switch (grow) {
-    case Direction::Down:
-      leftMost = x;
-      rightMost = x;
-      topMost = y;
-      bottomMost = clamp(y + length, 1, height - 2);
-      if (map[x][bottomMost + 1] != Element::Floor)
-        return false;
-      break;
-    case Direction::Up:
-      leftMost = x;
-      rightMost = x;
-      topMost = clamp(y - length, 1, height - 2);
-      bottomMost = y;
-      if (map[x][topMost - 1] != Element::Floor)
-        return false;
-      break;
-    case Direction::Left:
-      leftMost = clamp(x - length, 1, width - 2);
-      rightMost = x;
-      topMost = y;
-      bottomMost = y;
-      if (map[leftMost - 1][y] != Element::Floor)
-        return false;
-      break;
-    case Direction::Right:
-      leftMost = x;
-      rightMost = clamp(x + length, 1, width - 2);
-      topMost = y;
-      bottomMost = y;
-      if (map[rightMost + 1][y] != Element::Floor)
-        return false;
-      break;
-    case Direction::None:
-      return false;
-      break;
-  }
-
-  return rectFill(leftMost, rightMost, topMost, bottomMost, Element::Floor);
-}
-
-bool MapGen::buildRoom(const int x, const int y, const Direction grow) {
-
-  auto w = world->rnd->getInt(4, width / 4);
-  auto h = world->rnd->getInt(4, height / 2);
-  int leftMost, rightMost, topMost, bottomMost;
-
-  switch (grow) {
-    case Direction::Down:
-      leftMost = int(x - w / 2.0);
-      rightMost = int(x + w / 2.0);
-      topMost = y;
-      bottomMost = y + h;
-      break;
-    case Direction::Up:
-      leftMost = int(x - w / 2.0);
-      rightMost = int(x + w / 2.0);
-      topMost = y - h;
-      bottomMost = y;
-      break;
-    case Direction::Left:
-      leftMost = x - w;
-      rightMost = x;
-      topMost = int(y - h / 2.0);
-      bottomMost = int(y + h / 2.0);
-      break;
-    case Direction::Right:
-      leftMost = x;
-      rightMost = x + w;
-      topMost = int(y - h / 2.0);
-      bottomMost = int(y + h / 2.0);
-      break;
-    case Direction::None:
-      leftMost = int(x - w / 2.0);
-      rightMost = int(x + w / 2.0);
-      topMost = int(y - h / 2.0);
-      bottomMost = int(y + h / 2.0);
-      break;
-  }
-
-  return rectFill(leftMost, rightMost, topMost, bottomMost, Element::Floor);
-}
-
-
-Direction MapGen::spaceAvailable(const int x, const int y) {
-  if (x < 1 || y < 1 || x >= width - 1 || y >= width - 1)
-    return Direction::None;
-  if (map[x][y] != Element::Rock)
-    return Direction::None;
-
-  auto testLeft = map[x - 1][y] == Element::Rock ? 1 : 0;
-  auto testRight = map[x + 1][y] == Element::Rock ? 1 : 0;
-  auto testDown = map[x][y + 1] == Element::Rock ? 1 : 0;
-  auto testUp = map[x][y - 1] == Element::Rock ? 1 : 0;
-  auto count = testUp + testDown + testRight + testLeft;
-
-  if (count != 3)
-    return Direction::None;
-
-  if (count == 3 && !testUp) {
-    return Direction::Down;
-  }
-  if (count == 3 && !testDown) {
-    return Direction::Up;
-  }
-  if (count == 3 && !testLeft) {
-    return Direction::Right;
-  }
-  if (count == 3 && !testRight) {
-    return Direction::Left;
-  }
-  return Direction::None;
-}
-
-Direction MapGen::findSpace(int &x, int &y, const int maxTries) {
-  auto tries = 0;
-  Direction growDirection;
-
-  do {
-    tries++;
-    if (tries > maxTries) {
-      return Direction::None;
-    }
-    x = world->rnd->getInt(1, width - 2);
-    y = world->rnd->getInt(1, height - 2);
-    growDirection = spaceAvailable(x, y);
-  } while (growDirection == Direction::None);
-  return growDirection;
-}
-
 void MapGen::init() {
-  auto roomCount = (width*height)/500;
-  auto x = 20;
-  auto y = 10;
-  auto tries = 0;
-  Direction growDirection;
+  typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
+  typedef boost::graph_traits<Graph>::edge_iterator edge_iterator;
+  typedef boost::graph_traits<Graph>::vertex_iterator vertex_iterator;
 
-  buildRoom(width / 2, height / 2, Direction::None);
-  for (auto i : boost::irange(0, roomCount)) {
-    retry:
-    if (tries > 10000)
-      return;
-    tries++;
-    growDirection = findSpace(x, y, 10000);
-    auto random = world->rnd->getInt(0, 100);
-    auto result = true;
-    if (random < 99) {
-      result = buildCorridor(x, y, growDirection);
+  Graph map_graph;
+
+  boost::random::mt19937 rng;
+  boost::generate_random_graph(map_graph, 10, 10, rng, true, true);
+  boost::make_connected(map_graph);
+
+  std::pair<edge_iterator, edge_iterator> ei = boost::edges(map_graph);
+  std::pair<vertex_iterator, vertex_iterator> vi = boost::vertices(map_graph);
+
+  std::map<int, std::shared_ptr<Room> > rooms;
+
+  bool playerRoom = true;
+  for (vertex_iterator it = vi.first; it != vi.second; ++it) {
+    int x, y;
+
+    if(playerRoom) {
+      x = world->currLevel->width/2;
+      y = world->currLevel->height/2;
+      playerRoom = false;
     } else {
-      result = buildRoom(x, y, growDirection);
+      x = world->rnd->getInt(2, width - 2);
+      y = world->rnd->getInt(2, height - 2);
     }
-    if (!result)
-      goto retry;
+
+    auto w = world->rnd->getInt(3, 20);
+    auto h = world->rnd->getInt(3, 20);
+    auto room = std::make_shared<Room>(Position(x, y), w, h);
+    rooms.insert(std::pair<int, std::shared_ptr<Room> >(*it, room));
+    buildRoom(*room);
   }
+
+  for (edge_iterator it = ei.first; it != ei.second; ++it) {
+    buildCorridor(*rooms[boost::source(*it, map_graph)], *rooms[boost::target(*it, map_graph)]);
+  }
+}
+
+bool MapGen::buildRoom(const Room &r) {
+  auto leftMost = int(r.center.x - r.width / 2.0);
+  auto rightMost = int(r.center.x + r.width / 2.0);
+  auto topMost = int(r.center.y - r.height / 2.0);
+  auto bottomMost = int(r.center.y + r.height / 2.0);
+  return rectFill(leftMost, rightMost, topMost, bottomMost, Element::Floor);
+}
+
+bool MapGen::buildCorridor(const Room &r1, const Room &r2) {
+  int x = r1.center.x;
+  int y = r1.center.y;
+
+  auto step = [&](int &var, const int &testVar, const int size) {
+    if (abs(var - testVar) >= size) {
+      for (auto i : boost::irange(0, size)) {
+        var += sgn(testVar - var);
+        map[x][y] = Element::Floor;
+      }
+      return true;
+    }
+    return false;
+  };
+
+  auto repeatSteps = [&](const int size) {
+    do {} while (step(x, r2.center.x, size) || step(y, r2.center.y, size));
+  };
+
+  repeatSteps(13);
+  repeatSteps(7);
+  repeatSteps(5);
+  repeatSteps(3);
+  repeatSteps(2);
+  repeatSteps(1);
+
+  return true;
 }

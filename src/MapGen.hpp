@@ -10,6 +10,21 @@
 enum class Element { Empty, Floor, Wall, Rock };
 enum class Direction {None, Up, Down, Left, Right};
 
+
+struct Room {
+  Position center;
+  int width;
+  int height;
+  Room(const Position center, const int width, const int height) : center(center), width(width), height(height) {}
+};
+
+struct Corridor {
+  int firstRoom;
+  int secondRoom;
+  Corridor(const int firstRoom, const int secondRoom) : firstRoom(firstRoom), secondRoom(secondRoom) {}
+};
+
+
 struct MapGen {
   std::shared_ptr<World> world;
   int width, height;
@@ -40,10 +55,12 @@ struct MapGen {
 
   void floodFill(const int x, const int y, const Element fill);
 
-  bool buildRoom(const int x, const int y, const Direction d);
-  bool buildCorridor(const int x, const int y, const Direction grow);
-  Direction spaceAvailable(const int x, const int y);
-  Direction findSpace(int &x, int &y, const int maxTries);
+  bool buildRoom(const Room& r);
+  bool buildCorridor(const Room& r1, const Room& r2);
+
+//  bool buildCorridor(const int x, const int y, const Direction grow, const bool deadend=true);
+//  Direction spaceAvailable(const int x, const int y);
+//  Direction findSpace(int &x, int &y, const int maxTries);
 };
 
 

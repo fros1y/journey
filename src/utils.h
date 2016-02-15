@@ -25,5 +25,9 @@ void forXY(const int max_x, const int max_y, F function) {
   }
 }
 
+template <typename T> int sgn(T val) {
+  return (T(0) < val) - (val < T(0));
+}
+
 
 #endif //JOURNEY_UTILS_H
