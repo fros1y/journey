@@ -3,6 +3,7 @@
 //
 #include <algorithm>
 #include <functional>
+#include <assert.h>
 
 #ifndef JOURNEY_UTILS_H
 #define JOURNEY_UTILS_H
@@ -29,5 +30,11 @@ template <typename T> int sgn(T val) {
   return (T(0) < val) - (val < T(0));
 }
 
+template <typename I, typename O> O maprange(I v, I in_min, I in_max, O out_min, O out_max)
+{
+  assert(v >= in_min);
+  assert(v <= in_max);
+  return (v - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 #endif //JOURNEY_UTILS_H
