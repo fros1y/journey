@@ -4,7 +4,7 @@ include(ExternalProject)
 
 set(CMAKE_BUILD_TYPE RELEASE)
 
-set(CMAKE_CXX_FLAGS " -pedantic -Werror -Wall -Wextra -Wno-error=gnu-case-range -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++11")
+set(CMAKE_CXX_FLAGS " -pedantic -Werror -Wall -Wextra -Wno-error=gnu-case-range -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++11 -std=c++1y")
 set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -DRELEASE")
 set(CMAKE_CXX_FLAGS_DEBUG    "-O0")
 
