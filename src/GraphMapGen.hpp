@@ -7,9 +7,13 @@
 
 #include <vector>
 #include "World.hpp"
+#include <libavoid/libavoid.h>
+
 enum class Element { Empty, Floor, Wall, Rock };
 enum class Direction {None, Up, Down, Left, Right};
 
+
+void _libavoid_callback(void *ptr);
 
 struct Room {
   Position center;
@@ -25,13 +29,13 @@ struct Corridor {
 };
 
 
-struct MapGen {
+struct GraphMapGen {
   std::shared_ptr<World> world;
   int width, height;
   std::vector<std::vector<Element>> map;
 
 
-  MapGen(std::shared_ptr<World> world, const int width, const int height) : world(world), width(width), height(height) {
+  GraphMapGen(std::shared_ptr<World> world, const int width, const int height) : world(world), width(width), height(height) {
     map.resize(width, std::vector<Element>(height, Element::Rock));
   }
 

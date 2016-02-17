@@ -3,7 +3,7 @@
 //
 
 #include <libtcod.hpp>
-#include "MapGen.hpp"
+#include "GraphMapGen.hpp"
 #include "utils.h"
 #include <boost/range/irange.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -28,7 +28,9 @@
 #include <fstream>
 #include <string>
 
-bool MapGen::ellipseFill(int leftMost,
+#include <libavoid/libavoid.h>
+
+bool GraphMapGen::ellipseFill(int leftMost,
                       int rightMost,
                       int topMost,
                       int bottomMost,
@@ -59,7 +61,7 @@ bool MapGen::ellipseFill(int leftMost,
   return true;
 }
 
-bool MapGen::rectFill(int leftMost,
+bool GraphMapGen::rectFill(int leftMost,
                       int rightMost,
                       int topMost,
                       int bottomMost,
@@ -85,7 +87,7 @@ bool MapGen::rectFill(int leftMost,
   return true;
 }
 
-void MapGen::floodFill(const int x, const int y, const Element fill) {
+void GraphMapGen::floodFill(const int x, const int y, const Element fill) {
   if (map[x][y] != Element::Empty)
     return;
   else
@@ -136,25 +138,46 @@ struct kamada_kawai_done {
   double last_delta;
 };
 
-void MapGen::init() {
+
+
+std::vector<Position> _libavoid_storage;
+
+void _libavoid_callback(void *ptr) {
+  printf("In callback\n");
+      Avoid::ConnRef *connRef = (Avoid::ConnRef *) ptr;
+      const Avoid::PolyLine& route = connRef->route();
+      for(auto i = 0; i < route.ps.size()-1; ++i) {
+        int x = int(route.ps[i].x);
+        int y = int(route.ps[i].y);
+        TCODLine::init(x, y, int(route.ps[i+1].x), int(route.ps[i+1].y));
+
+        printf("From (%i, %i) to (%i, %i)\n", x, y, int(route.ps[i+1].x), int(route.ps[i+1].y));
+
+        do {
+          _libavoid_storage.emplace_back(x, y);
+        } while(!TCODLine::step(&x, &y));
+      }
+    }
+
+void GraphMapGen::init() {
   std::unique_ptr<Graph> map_graph;
   boost::random::mt19937 rng;
 
   do {
     map_graph = std::make_unique<Graph>();
-    boost::generate_random_graph(*map_graph, 10, 10, rng, true, true);
+    boost::generate_random_graph(*map_graph, 20, 10, rng, true, true);
     boost::make_connected(*map_graph);
   } while (!boost::boyer_myrvold_planarity_test(*map_graph));
 
-  //boost::circle_graph_layout(*map_graph, get(vertex_position, *map_graph), 5.0);
-  boost::random_graph_layout(*map_graph, get(vertex_position, *map_graph), boost::square_topology<>(1.0));
+  boost::circle_graph_layout(*map_graph, get(vertex_position, *map_graph), 5.0);
+  //boost::random_graph_layout(*map_graph, get(vertex_position, *map_graph), boost::square_topology<>(1.0));
 
-  bool ok = kamada_kawai_spring_layout(*map_graph,
-                                       get(vertex_position, *map_graph),
-                                       get(boost::edge_weight, *map_graph),
-                                       boost::square_topology<>(1.0),
-                                       boost::side_length(1.0),
-                                       kamada_kawai_done());
+//  bool ok = kamada_kawai_spring_layout(*map_graph,
+//                                       get(vertex_position, *map_graph),
+//                                       get(boost::edge_weight, *map_graph),
+//                                       boost::square_topology<>(1.0),
+//                                       boost::side_length(1.0),
+//                                       kamada_kawai_done());
 
   auto positions = get(vertex_position, *map_graph);
 
@@ -177,6 +200,8 @@ void MapGen::init() {
     max_y = std::max(max_y, y);
   }
 
+  auto router = std::make_unique<Avoid::Router>(Avoid::OrthogonalRouting);
+
   bool playerRoom = true;
   for (vertex_iterator it = vi.first; it != vi.second; ++it) {
     int x, y;
@@ -191,18 +216,30 @@ void MapGen::init() {
     }
 
     auto w = world->rnd->getInt(3, 20);
-    auto h = world->rnd->getInt(3, 20);
+    auto h = world->rnd->getInt(w/3, w);
     auto room = std::make_shared<Room>(Position(x, y), w, h);
     rooms.insert(std::pair<int, std::shared_ptr<Room> >(*it, room));
     buildRoom(*room);
+    Avoid::Rectangle roomRect(Avoid::Point(x,y), int(1.05*w), int(1.05*h));
+    Avoid::ShapeRef *roomShape = new Avoid::ShapeRef(router.get(), roomRect);
   }
 
   for (edge_iterator it = ei.first; it != ei.second; ++it) {
-    buildCorridor(*rooms[boost::source(*it, *map_graph)], *rooms[boost::target(*it, *map_graph)]);
+    auto src = rooms[boost::source(*it, *map_graph)];
+    auto dest = rooms[boost::target(*it, *map_graph)];
+    Avoid::Point srcPt(src->center.x, src->center.y);
+    Avoid::Point destPt(dest->center.x, dest->center.y);
+    auto connRef = new Avoid::ConnRef(router.get(), srcPt, destPt);
+    connRef->setCallback(&_libavoid_callback, connRef);
+  }
+  router->processTransaction();
+
+  for(auto p : _libavoid_storage) {
+    map[clamp(p.x, 1, width-2)][clamp(p.y, 1, width-2)] = Element::Floor;
   }
 }
 
-bool MapGen::buildRoom(const Room &r) {
+bool GraphMapGen::buildRoom(const Room &r) {
   auto leftMost = int(r.center.x - r.width / 2.0);
   auto rightMost = int(r.center.x + r.width / 2.0);
   auto topMost = int(r.center.y - r.height / 2.0);
@@ -217,7 +254,7 @@ bool MapGen::buildRoom(const Room &r) {
   }
 }
 
-bool MapGen::buildCorridor(const Room &r1, const Room &r2) {
+bool GraphMapGen::buildCorridor(const Room &r1, const Room &r2) {
   int x = r1.center.x;
   int y = r1.center.y;
 
