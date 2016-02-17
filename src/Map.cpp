@@ -1,9 +1,10 @@
 #include "Map.hpp"
 #include "utils.h"
 #include "GraphMapGen.hpp"
+#include "DiggerMapGen.hpp"
 
 void Map::generateLevel() {
-  auto mapgen = GraphMapGen(world, width, height);
+  auto mapgen = DiggerMapGen(world, width, height);
   mapgen.init();
   mapgen.forAll([this](const Element e, const int x, const int y){
     switch(e) {

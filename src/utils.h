@@ -10,7 +10,6 @@
 
 int min(std::__1::vector<int> list);
 
-
 template <typename T>
 T clamp(T in, T low, T high)
 {
