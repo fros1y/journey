@@ -1,6 +1,6 @@
 file(GLOB journey_SRC *.cpp)
 
-include_directories(include ${entityx_INCLUDE_DIR})
+include_directories(include ${entityx_INCLUDE_DIR} "/usr/local/include")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/terminal8x14_gs_ro.png ${CMAKE_CURRENT_BINARY_DIR}/terminal8x14_gs_ro.png COPYONLY)
 add_executable(Journey ${journey_SRC} utils.cpp utils.h GraphMapGen.cpp GraphMapGen.hpp DiggerMapGen.cpp DiggerMapGen.hpp MapGen.cpp MapGen.hpp)
 

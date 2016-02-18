@@ -54,12 +54,13 @@ struct MapGen {
                    int bottomMost,
                    Element fill, bool squash=false);
 
-  bool rectFill(
-      int ,
-      int ,
-      int ,
-      int ,
-      Element, bool squash=false);
+  bool rectFill(const Position &center, const int width, const int height, const Element fill, const bool squash=false);
+
+  bool rectFill(const int leftMostIn,
+                const int rightMostIn,
+                const int topMostIn,
+                const int bottomMostIn,
+                const Element fill, const bool squash);
 
   void floodFill(const int x, const int y, const Element fill);
   bool buildRoom(const Room& r, bool squash=false);

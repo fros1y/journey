@@ -37,16 +37,24 @@ bool MapGen::ellipseFill(int leftMost,
   return true;
 }
 
-bool MapGen::rectFill(int leftMost,
-                      int rightMost,
-                      int topMost,
-                      int bottomMost,
-                      Element fill, bool squash) {
+bool MapGen::rectFill(const Position &center, const int width, const int height, const Element fill, const bool squash) {
+  auto leftMost = int(center.x - width / 2.0);
+  auto rightMost = int(center.x + width / 2.0);
+  auto topMost = int(center.y - height / 2.0);
+  auto bottomMost = int(center.y + height / 2.0);
+  return rectFill(leftMost, rightMost, topMost, bottomMost, fill, squash);
+}
 
-  leftMost = clamp(leftMost, 1, width - 2);
-  rightMost = clamp(rightMost, 1, width - 2);
-  topMost = clamp(topMost, 1, height - 2);
-  bottomMost = clamp(bottomMost, 1, height - 2);
+bool MapGen::rectFill(const int leftMostIn,
+                      const int rightMostIn,
+                      const int topMostIn,
+                      const int bottomMostIn,
+                      const Element fill, const bool squash) {
+
+  auto leftMost = clamp(leftMostIn, 1, width - 2);
+  auto rightMost = clamp(rightMostIn, 1, width - 2);
+  auto topMost = clamp(topMostIn, 1, height - 2);
+  auto bottomMost = clamp(bottomMostIn, 1, height - 2);
 
   if (!squash) {
     for (auto i : boost::irange(leftMost, rightMost + 1)) {
