@@ -5,3 +5,4 @@ vendor/entityx/
 CMakeLists.txt.user
 
 .idea/
+xcode/
