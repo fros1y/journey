@@ -55,6 +55,9 @@ void gameLoop(std::shared_ptr<World> world, std::shared_ptr<Display> display) {
         d_y = 1;
         d_x = 1;
         break;
+      case 'g':
+        world->generateMap();
+        break;
       case 'q':
         quit=true;
         break;

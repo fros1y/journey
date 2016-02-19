@@ -94,19 +94,19 @@ void GraphMapGen::init() {
 
   do {
     map_graph = std::make_unique<Graph>();
-    boost::generate_random_graph(*map_graph, 20, 10, rng, true, true);
+    boost::generate_random_graph(*map_graph, 20, 15, rng, true, true);
     boost::make_connected(*map_graph);
   } while (!boost::boyer_myrvold_planarity_test(*map_graph));
 
-  boost::circle_graph_layout(*map_graph, get(vertex_position, *map_graph), 5.0);
-  //boost::random_graph_layout(*map_graph, get(vertex_position, *map_graph), boost::square_topology<>(1.0));
+  //boost::circle_graph_layout(*map_graph, get(vertex_position, *map_graph), 5.0);
+  boost::random_graph_layout(*map_graph, get(vertex_position, *map_graph), boost::square_topology<>(1.0));
 
-//  bool ok = kamada_kawai_spring_layout(*map_graph,
-//                                       get(vertex_position, *map_graph),
-//                                       get(boost::edge_weight, *map_graph),
-//                                       boost::square_topology<>(1.0),
-//                                       boost::side_length(1.0),
-//                                       kamada_kawai_done());
+  bool ok = kamada_kawai_spring_layout(*map_graph,
+                                       get(vertex_position, *map_graph),
+                                       get(boost::edge_weight, *map_graph),
+                                       boost::square_topology<>(1.0),
+                                       boost::side_length(1.0),
+                                       kamada_kawai_done());
 
   auto positions = get(vertex_position, *map_graph);
 
@@ -130,8 +130,17 @@ void GraphMapGen::init() {
   }
 
   auto router = std::make_unique<Avoid::Router>(Avoid::OrthogonalRouting);
+  router->setRoutingOption(Avoid::improveHyperedgeRoutesMovingAddingAndDeletingJunctions, true);
+  router->setRoutingOption(Avoid::nudgeSharedPathsWithCommonEndPoint, false);
 
-  bool playerRoom = true;
+  router->setRoutingPenalty(Avoid::crossingPenalty, 0);
+  router->setRoutingPenalty(Avoid::fixedSharedPathPenalty, 0);
+  router->setRoutingPenalty(Avoid::reverseDirectionPenalty, 100);
+  router->setRoutingParameter(Avoid::shapeBufferDistance, 3);
+  //router->setRoutingPenalty(Avoid::anglePenalty, 0);
+
+
+  bool playerRoom = false;
   for (vertex_iterator it = vi.first; it != vi.second; ++it) {
     int x, y;
 
@@ -140,22 +149,37 @@ void GraphMapGen::init() {
       y = world->currLevel->height / 2;
       playerRoom = false;
     } else {
-      x = maprange(positions[*it][0], min_x, max_x, 1, width-2);
-      y = maprange(positions[*it][1], min_y, max_y, 1, height-2);
+      x = maprange(positions[*it][0], min_x, max_x, 10, width - 10);
+      y = maprange(positions[*it][1], min_y, max_y, 10, height - 10);
     }
 
     auto w = world->rnd->getInt(3, 20);
-    auto h = world->rnd->getInt(w/3, w);
+    auto h = world->rnd->getInt(3, w, w*0.625);
     auto room = std::make_shared<Room>(Position(x, y), w, h);
-    rooms.insert(std::pair<int, std::shared_ptr<Room> >(*it, room));
-    buildRoom(*room);
-    Avoid::Rectangle roomRect(Avoid::Point(x,y), int(1.05*w), int(1.05*h));
-    Avoid::ShapeRef *roomShape = new Avoid::ShapeRef(router.get(), roomRect);
+
+    bool found = false;
+    int count = 0;
+    do {
+      count++;
+      auto w = world->rnd->getInt(3, 20);
+      auto h = world->rnd->getInt(3, w, w*0.625);
+      auto room = std::make_shared<Room>(Position(x, y), w, h);
+      if (buildRoom(*room)) {
+        rooms.insert(std::pair<int, std::shared_ptr<Room> >(*it, room));
+        Avoid::Rectangle roomRect(Avoid::Point(x, y), w, h);
+        Avoid::ShapeRef *roomShape = new Avoid::ShapeRef(router.get(), roomRect);
+        found = true;
+      }
+    } while (!found && count < 100);
+    if(!found)
+      rooms.insert(std::pair<int, std::shared_ptr<Room> >(*it, nullptr));
   }
 
   for (edge_iterator it = ei.first; it != ei.second; ++it) {
     auto src = rooms[boost::source(*it, *map_graph)];
     auto dest = rooms[boost::target(*it, *map_graph)];
+    if(!src || !dest)
+      continue;
     Avoid::Point srcPt(src->center.x, src->center.y);
     Avoid::Point destPt(dest->center.x, dest->center.y);
     auto connRef = new Avoid::ConnRef(router.get(), srcPt, destPt);

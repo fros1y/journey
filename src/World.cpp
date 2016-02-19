@@ -8,7 +8,7 @@ void World::init(std::shared_ptr<Display> d) {
 }
 
 void World::generateMap() {
-  currLevel = std::make_shared<Map>(shared_from_this(), 80, 80);
+  currLevel = std::make_shared<Map>(shared_from_this(), 100, 50);
   currLevel->generateLevel();
 }
 

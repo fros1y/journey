@@ -23,6 +23,18 @@ bool MapGen::ellipseFill(int leftMost,
   auto xcenter = (rightMost + leftMost) / 2.0;
   auto ycenter = (topMost + bottomMost) / 2.0;
 
+  for (auto i : boost::irange(leftMost-1, rightMost + 2)) {
+    for (auto j : boost::irange(topMost-1, bottomMost + 2)) {
+
+      auto x = i - xcenter;
+      auto y = j - ycenter;
+
+      auto test = (x * x) / (xaxis * xaxis) + (y * y) / (yaxis * yaxis);
+      if (test <= 0.9 && map[i][j] == Element::Floor && !squash)
+        return false;
+    }
+  }
+
   for (auto i : boost::irange(leftMost, rightMost + 1)) {
     for (auto j : boost::irange(topMost, bottomMost + 1)) {
 
@@ -57,8 +69,8 @@ bool MapGen::rectFill(const int leftMostIn,
   auto bottomMost = clamp(bottomMostIn, 1, height - 2);
 
   if (!squash) {
-    for (auto i : boost::irange(leftMost, rightMost + 1)) {
-      for (auto j : boost::irange(topMost, bottomMost + 1)) {
+    for (auto i : boost::irange(leftMost-1, rightMost + 2)) {
+      for (auto j : boost::irange(topMost-1, bottomMost + 2)) {
         if (map[i][j] != Element::Rock) {
           return false;
         }
