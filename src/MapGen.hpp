@@ -9,7 +9,7 @@
 #include "world.hpp"
 #include <vector>
 
-enum class Element { Empty, Hall, Room, Floor, Wall, Rock, Door };
+enum class Element { Empty, Floor, Wall, Rock, Door };
 enum class Direction {Up, Down, Left, Right, Count};
 
 struct Room {
@@ -74,9 +74,6 @@ struct MapGen {
     auto room = Room(center, width, height);
     return buildRoom(room, squash);
   }
-
-  bool buildCorridor(const Room& r1, const Room& r2);
-  bool buildCorridor(const Position& p1, const Position& p2);
 };
 
 

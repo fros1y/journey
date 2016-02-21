@@ -2,13 +2,23 @@
 // Created by Martin Galese on 2/21/16.
 //
 
-
 #include <boost/range/irange.hpp>
 #include "BSPMapGen.hpp"
 #include "utils.h"
 
-extern std::vector<Position> _libavoid_storage;
-void _libavoid_callback(void *ptr);
+std::vector<Position> _libavoid_storage;
+void _libavoid_callback(void *ptr) {
+  Avoid::ConnRef *connRef = (Avoid::ConnRef *) ptr;
+  const Avoid::PolyLine& route = connRef->route();
+  for(auto i = 0; i < route.ps.size()-1; ++i) {
+    int x = int(route.ps[i].x);
+    int y = int(route.ps[i].y);
+    TCODLine::init(x, y, int(route.ps[i+1].x), int(route.ps[i+1].y));
+    do {
+      _libavoid_storage.emplace_back(x, y);
+    } while(!TCODLine::step(&x, &y));
+  }
+}
 
 void BSPMapGen::init() {
   _libavoid_storage.clear();

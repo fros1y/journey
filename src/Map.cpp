@@ -1,7 +1,5 @@
 #include "Map.hpp"
 #include "utils.h"
-#include "GraphMapGen.hpp"
-#include "DiggerMapGen.hpp"
 #include "BSPMapGen.hpp"
 
 void Map::generateLevel() {
