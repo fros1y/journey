@@ -30,7 +30,7 @@ struct World: std::enable_shared_from_this<World> {
   entityx::EntityManager &entities = ECS.entities;
   std::shared_ptr<Map> currLevel;
 
-  bool WIZARD = true;
+  bool WIZARD = false;
 
   TCODRandom *rnd;
 

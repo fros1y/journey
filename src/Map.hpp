@@ -22,6 +22,8 @@ struct Map {
   std::shared_ptr<DjikstraMap> d_map;
   std::shared_ptr<LightMap> l_map;
 
+  Position playerStart;
+
 //  std::unordered_multimap<Position, std::shared_ptr< entityx::Entity > > entities;
 
 //  std::vector<entityx::Entity> tiles;

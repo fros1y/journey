@@ -13,7 +13,7 @@ struct DiggerMapGen: public MapGen {
   std::vector<std::shared_ptr<Digger>> diggers;
 
   DiggerMapGen(std::shared_ptr<World> world, const int width, const int height): MapGen(world, width, height) {}
-  void init();
+  void init() override;
 };
 
 struct Digger {

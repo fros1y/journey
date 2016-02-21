@@ -104,68 +104,6 @@ void Map::calculateLighting() const {
       });
 }
 
-//entityx::Entity Map::get(int x, int y) { return tiles[width * y + x]; }
-//
-//void Map::set(int x, int y, entityx::Entity e) { tiles[width * y + x] = e; }
-
-//void Map::addMonsters() {
-//  for (auto i = 0; i < 50; ++i) {
-//    int m_x, m_y;
-//    m_x = world->rnd->getInt(0, width);
-//    m_y = world->rnd->getInt(0, height);
-//
-//    auto enemy = world->entities.create();
-//    enemy.assign<Position>(m_x, m_y);
-//    enemy.assign<Obstruction>(true, false);
-//    enemy.assign<Render>('r');
-//    enemy.assign<AI>(AIType::Basic);
-//    enemy.assign<Speed>(2.0);
-//    enemy.assign<Name>("rat");
-//    enemy.assign<Health>(5);
-//    enemy.assign<Attackable>();
-//  }
-//
-//  for (auto i = 0; i < 25; ++i) {
-//    int m_x, m_y;
-//    m_x = world->rnd->getInt(0, width);
-//    m_y = world->rnd->getInt(0, height);
-//
-//    auto enemy = world->entities.create();
-//    enemy.assign<Position>(m_x, m_y);
-//    enemy.assign<Obstruction>(true, false);
-//    enemy.assign<Render>(',', TCODColor::blue);
-//    enemy.assign<LightSource>(1, TCODColor::lightBlue);
-//    enemy.assign<AI>(AIType::Basic);
-//    enemy.assign<Speed>(0.1);
-//    enemy.assign<Name>("mushroom");
-//    enemy.assign<Health>(1);
-//    enemy.assign<Attackable>();
-//  }
-//}
-
-
-//void Map::generateArena() {
-//  for (auto i = 0; i < height; ++i) {
-//    for (auto j = 0; j < width; ++j) {
-//      if (i == 0 || j == 0 || i == height - 1 || j == width - 1) {
-//        makeBlock(j, i);
-//      }
-//      if (i % 7 == 0 && j % 7 == 0) {
-//        makeBlock(j, i);
-//      }
-//      if (i % 14 == 0 && j % 14 == 0) {
-//        makeLightSource(j, i, 2, TCODColor::lightRed);
-//      }
-//    }
-//  }
-//  std::function<void(int, int)> f = [=](int x, int y) {
-//    makeFloor(x, y);
-//    return;
-//  };
-//  floodFill(1, 1, f);
-//  addMonsters();
-//}
-
 void Map::computeFoVFrom(int x, int y, int range) {
   tcod_map->computeFov(x, y, range);
 }

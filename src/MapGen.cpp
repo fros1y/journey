@@ -33,18 +33,6 @@ bool MapGen::ellipseFill(int leftMost,
     }
   }
 
-//  for (auto i : boost::irange(leftMost-1, rightMost + 2)) {
-//    for (auto j : boost::irange(topMost-1, bottomMost + 2)) {
-//
-//      auto x = i - xcenter;
-//      auto y = j - ycenter;
-//
-//      auto test = (x * x) / (xaxis * xaxis) + (y * y) / (yaxis * yaxis);
-//      if (test <= 0.9 && map[i][j] == Element::Floor && !squash)
-//        return false;
-//    }
-//  }
-
   for (auto i : boost::irange(leftMost, rightMost + 1)) {
     for (auto j : boost::irange(topMost, bottomMost + 1)) {
 

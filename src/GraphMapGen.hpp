@@ -15,7 +15,7 @@ void _libavoid_callback(void *ptr);
 struct GraphMapGen : public MapGen {
   GraphMapGen(std::shared_ptr<World> world, const int width, const int height): MapGen(world, width, height) {}
 
-  void init();
+  void init() override;
 
 //  bool buildCorridor(const int x, const int y, const Direction grow, const bool deadend=true);
 //  Direction spaceAvailable(const int x, const int y);

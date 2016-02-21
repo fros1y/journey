@@ -19,7 +19,7 @@ struct BSPMapGen : public MapGen, ITCODBspCallback {
 //    router.setRoutingPenalty(Avoid::reverseDirectionPenalty, 100);
     router.setRoutingParameter(Avoid::shapeBufferDistance, 1);
   }
-  void init();
+  void init() override;
   bool visitNode(TCODBsp *node, void *userData) override ;
   Position prevPos{-1,-1};
 

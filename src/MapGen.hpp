@@ -19,25 +19,25 @@ struct Room {
   Room(const Position center, const int width, const int height) : center(center), width(width), height(height) {}
 };
 
-struct Corridor {
-  int firstRoom;
-  int secondRoom;
-  Corridor(const int firstRoom, const int secondRoom) : firstRoom(firstRoom), secondRoom(secondRoom) {}
-};
-
-
-
-
 struct MapGen {
   std::shared_ptr<World> world;
   int width, height;
   std::vector<std::vector<Element>> map;
 
+  Position findFree() {
+    int x, y;
+    do {
+      x = world->rnd->getInt(1, width-1);
+      y = world->rnd->getInt(1, height-1);
+    } while(map[x][y]!=Element::Floor);
+    return Position(x,y);
+  }
+
   MapGen(std::shared_ptr<World> world, const int width, const int height) : world(world), width(width), height(height) {
     map.resize(width, std::vector<Element>(height, Element::Rock));
   }
 
-  void init() {}
+  virtual void init() = 0;
 
   template<typename F>
   void forAll(F function) {

@@ -14,7 +14,6 @@ void BSPMapGen::init() {
   _libavoid_storage.clear();
   auto BSP = std::make_unique<TCODBsp>(5,5, width-5, height-5);
   BSP->splitRecursive(world->rnd, 8, 20, 20, 1000.0f, 1000.0f);
-
   BSP->traverseInOrder(this, NULL);
   for(auto edge : edges) {
     auto srcP = edge.first;
@@ -26,8 +25,9 @@ void BSPMapGen::init() {
   }
   router.processTransaction();
   for(auto p : _libavoid_storage) {
-    map[clamp(p.x, 1, width-2)][clamp(p.y, 1, width-2)] = Element::Floor;
+    map[clamp(p.x, 1, width - 2)][clamp(p.y, 1, width - 2)] = Element::Floor;
   }
+  world->currLevel->playerStart = findFree();
 }
 
 bool BSPMapGen::visitNode(TCODBsp *node, void *userData) {
