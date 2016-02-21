@@ -32,17 +32,48 @@
 
 std::vector<Position> _libavoid_storage;
 
+Position getRandomDoorLocation(const Room& r, const World& world) {
+  auto leftMost = int(r.center.x - r.width / 2.0);
+  auto rightMost = int(r.center.x + r.width / 2.0);
+  auto topMost = int(r.center.y - r.height / 2.0);
+  auto bottomMost = int(r.center.y + r.height / 2.0);
+  auto d = Direction(world.rnd->getInt(0, int(Direction::Count) - 1));
+
+  int x = 0;
+  int y = 0;
+
+  printf("D: %i\n", d);
+
+  switch (d) {
+    case Direction::Up:
+      y = topMost - 1;
+      x = world.rnd->getInt(leftMost + 2, rightMost - 2);
+      break;
+    case Direction::Down:
+      y = bottomMost;
+      x = world.rnd->getInt(leftMost + 2, rightMost - 2);
+      break;
+    case Direction::Left:
+      y = world.rnd->getInt(topMost + 2, bottomMost - 2);
+      x = leftMost - 1;
+      break;
+    case Direction::Right:
+      y = world.rnd->getInt(topMost + 2, bottomMost - 2);
+      x = rightMost;
+      break;
+    default:
+      break;
+  }
+  return Position(x, y);
+}
+
 void _libavoid_callback(void *ptr) {
-  printf("In callback\n");
       Avoid::ConnRef *connRef = (Avoid::ConnRef *) ptr;
       const Avoid::PolyLine& route = connRef->route();
       for(auto i = 0; i < route.ps.size()-1; ++i) {
         int x = int(route.ps[i].x);
         int y = int(route.ps[i].y);
         TCODLine::init(x, y, int(route.ps[i+1].x), int(route.ps[i+1].y));
-
-        printf("From (%i, %i) to (%i, %i)\n", x, y, int(route.ps[i+1].x), int(route.ps[i+1].y));
-
         do {
           _libavoid_storage.emplace_back(x, y);
         } while(!TCODLine::step(&x, &y));
@@ -55,9 +86,9 @@ void GraphMapGen::init() {
   auto router = std::make_unique<Avoid::Router>(Avoid::OrthogonalRouting);
   router->setRoutingOption(Avoid::improveHyperedgeRoutesMovingAddingAndDeletingJunctions, true);
   router->setRoutingOption(Avoid::nudgeSharedPathsWithCommonEndPoint, false);
-  router->setRoutingPenalty(Avoid::crossingPenalty, 10000);
-  router->setRoutingPenalty(Avoid::fixedSharedPathPenalty, 0);
-  router->setRoutingPenalty(Avoid::reverseDirectionPenalty, 100);
+  router->setRoutingPenalty(Avoid::crossingPenalty, 0);
+  router->setRoutingPenalty(Avoid::fixedSharedPathPenalty, 10000);
+  router->setRoutingPenalty(Avoid::reverseDirectionPenalty, 0);
   router->setRoutingParameter(Avoid::shapeBufferDistance, 3);
 
   bool playerRoom = true;
@@ -89,7 +120,7 @@ void GraphMapGen::init() {
     }
   }
 
-  for(auto i : boost::irange(0, 7)) {
+  for(auto i : boost::irange(0, 15)) {
     int srcN, destN;
     do {
       srcN = world->rnd->getInt(0, roomCount-1);
@@ -98,8 +129,16 @@ void GraphMapGen::init() {
 
     auto src = rooms[srcN];
     auto dest = rooms[destN];
-    Avoid::Point srcPt(src->center.x, src->center.y);
-    Avoid::Point destPt(dest->center.x, dest->center.y);
+//    auto srcP = src->center;
+//    auto destP = dest->center;
+    auto srcP = getRandomDoorLocation(*src, *world);
+    auto destP = getRandomDoorLocation(*dest, *world);
+    map[srcP.x][srcP.y] = Element::Door;
+    map[destP.x][destP.y] = Element::Door;
+
+
+    Avoid::Point srcPt(srcP.x, srcP.y);
+    Avoid::Point destPt(destP.x, destP.y);
     auto connRef = new Avoid::ConnRef(router.get(), srcPt, destPt);
     connRef->setCallback(&_libavoid_callback, connRef);
   }

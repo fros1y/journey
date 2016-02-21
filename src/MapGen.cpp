@@ -23,17 +23,27 @@ bool MapGen::ellipseFill(int leftMost,
   auto xcenter = (rightMost + leftMost) / 2.0;
   auto ycenter = (topMost + bottomMost) / 2.0;
 
-  for (auto i : boost::irange(leftMost-1, rightMost + 2)) {
-    for (auto j : boost::irange(topMost-1, bottomMost + 2)) {
-
-      auto x = i - xcenter;
-      auto y = j - ycenter;
-
-      auto test = (x * x) / (xaxis * xaxis) + (y * y) / (yaxis * yaxis);
-      if (test <= 0.9 && map[i][j] == Element::Floor && !squash)
-        return false;
+  if (!squash) {
+    for (auto i : boost::irange(leftMost, rightMost)) {
+      for (auto j : boost::irange(topMost, bottomMost)) {
+        if (map[i][j] != Element::Rock) {
+          return false;
+        }
+      }
     }
   }
+
+//  for (auto i : boost::irange(leftMost-1, rightMost + 2)) {
+//    for (auto j : boost::irange(topMost-1, bottomMost + 2)) {
+//
+//      auto x = i - xcenter;
+//      auto y = j - ycenter;
+//
+//      auto test = (x * x) / (xaxis * xaxis) + (y * y) / (yaxis * yaxis);
+//      if (test <= 0.9 && map[i][j] == Element::Floor && !squash)
+//        return false;
+//    }
+//  }
 
   for (auto i : boost::irange(leftMost, rightMost + 1)) {
     for (auto j : boost::irange(topMost, bottomMost + 1)) {
@@ -69,8 +79,8 @@ bool MapGen::rectFill(const int leftMostIn,
   auto bottomMost = clamp(bottomMostIn, 1, height - 2);
 
   if (!squash) {
-    for (auto i : boost::irange(leftMost-1, rightMost + 2)) {
-      for (auto j : boost::irange(topMost-1, bottomMost + 2)) {
+    for (auto i : boost::irange(leftMost, rightMost)) {
+      for (auto j : boost::irange(topMost, bottomMost)) {
         if (map[i][j] != Element::Rock) {
           return false;
         }
@@ -78,8 +88,8 @@ bool MapGen::rectFill(const int leftMostIn,
     }
   }
 
-  for (auto i : boost::irange(leftMost, rightMost + 1)) {
-    for (auto j : boost::irange(topMost, bottomMost + 1)) {
+  for (auto i : boost::irange(leftMost, rightMost)) {
+    for (auto j : boost::irange(topMost, bottomMost)) {
       map[i][j] = fill;
     }
   }
@@ -110,16 +120,17 @@ bool MapGen::buildRoom(const Room &r, bool squash) {
 
   auto rnd = world->rnd->getInt(0, 100);
   switch (rnd) {
-    case 0 ... 25:
+    case 0 ... 10:
       return ellipseFill(leftMost, rightMost, topMost, bottomMost, Element::Floor, squash);
     default:
       return rectFill(leftMost, rightMost, topMost, bottomMost, Element::Floor, squash);
   }
 }
 
-bool MapGen::buildCorridor(const Room &r1, const Room &r2) {
-  int x = r1.center.x;
-  int y = r1.center.y;
+
+bool MapGen::buildCorridor(const Position &p1, const Position &p2) {
+  int x = p1.x;
+  int y = p1.y;
 
   auto step = [&](int &var, const int &testVar, const int size) {
     if (abs(var - testVar) >= size) {
@@ -135,8 +146,8 @@ bool MapGen::buildCorridor(const Room &r1, const Room &r2) {
   auto repeatSteps = [&](const int size) {
     bool xtest, ytest;
     do {
-      xtest = step(x, r2.center.x, size);
-      ytest = step(y, r2.center.y, size);
+      xtest = step(x, p2.x, size);
+      ytest = step(y, p2.y, size);
     } while (xtest || ytest);
   };
 
@@ -149,4 +160,8 @@ bool MapGen::buildCorridor(const Room &r1, const Room &r2) {
   repeatSteps(1);
 
   return true;
+}
+
+bool MapGen::buildCorridor(const Room &r1, const Room &r2) {
+  return buildCorridor(r1.center, r2.center);
 }

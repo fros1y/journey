@@ -2,9 +2,10 @@
 #include "utils.h"
 #include "GraphMapGen.hpp"
 #include "DiggerMapGen.hpp"
+#include "BSPMapGen.hpp"
 
 void Map::generateLevel() {
-  auto mapgen = GraphMapGen(world, width, height);
+  auto mapgen = BSPMapGen(world, width, height);
   mapgen.init();
   mapgen.forAll([this](const Element e, const int x, const int y){
     switch(e) {
@@ -14,6 +15,10 @@ void Map::generateLevel() {
         break;
       case Element::Floor:
         makeFloor(x, y);
+        break;
+      case Element::Door:
+        makeDoor(x, y);
+        break;
       default:
         break;
     }
@@ -24,6 +29,12 @@ void Map::makeLightSource(int x, int y, float brightness, TCODColor color) {
   auto light = world->entities.create();
   light.assign<Position>(x, y);
   light.assign<LightSource>(brightness, color);
+}
+
+void Map::makeDoor(int x, int y) {
+  auto floor = world->entities.create();
+  floor.assign<Position>(x, y);
+  floor.assign<Render>('+');
 }
 
 void Map::makeBlock(int x, int y) {
