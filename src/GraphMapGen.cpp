@@ -30,45 +30,6 @@
 
 #include <libavoid/libavoid.h>
 
-
-enum vertex_position_t { vertex_position };
-namespace boost { BOOST_INSTALL_PROPERTY(vertex, position); }
-typedef boost::square_topology<>::point_type point;
-
-typedef boost::adjacency_list<boost::vecS,
-                              boost::vecS,
-                              boost::undirectedS,
-                              boost::property<boost::vertex_index_t, int,
-                                              boost::property<vertex_position_t, point> >,
-                              boost::property<boost::edge_weight_t, double> > Graph;
-
-typedef boost::graph_traits<Graph>::edge_iterator edge_iterator;
-typedef boost::graph_traits<Graph>::vertex_iterator vertex_iterator;
-
-
-struct kamada_kawai_done {
-  kamada_kawai_done() : last_delta() { }
-
-  template<typename Graph>
-  bool operator()(double delta_p,
-                  typename boost::graph_traits<Graph>::vertex_descriptor /*p*/,
-                  const Graph & /*g*/,
-                  bool global) {
-    if (global) {
-      double diff = last_delta - delta_p;
-      if (diff < 0) diff = -diff;
-      last_delta = delta_p;
-      return diff < 0.01;
-    } else {
-      return delta_p < 0.01;
-    }
-  }
-
-  double last_delta;
-};
-
-
-
 std::vector<Position> _libavoid_storage;
 
 void _libavoid_callback(void *ptr) {
@@ -89,102 +50,60 @@ void _libavoid_callback(void *ptr) {
     }
 
 void GraphMapGen::init() {
-  std::unique_ptr<Graph> map_graph;
-  boost::random::mt19937 rng;
-
-  do {
-    map_graph = std::make_unique<Graph>();
-    boost::generate_random_graph(*map_graph, 20, 15, rng, true, true);
-    boost::make_connected(*map_graph);
-  } while (!boost::boyer_myrvold_planarity_test(*map_graph));
-
-  //boost::circle_graph_layout(*map_graph, get(vertex_position, *map_graph), 5.0);
-  boost::random_graph_layout(*map_graph, get(vertex_position, *map_graph), boost::square_topology<>(1.0));
-
-  bool ok = kamada_kawai_spring_layout(*map_graph,
-                                       get(vertex_position, *map_graph),
-                                       get(boost::edge_weight, *map_graph),
-                                       boost::square_topology<>(1.0),
-                                       boost::side_length(1.0),
-                                       kamada_kawai_done());
-
-  auto positions = get(vertex_position, *map_graph);
-
-  std::pair<edge_iterator, edge_iterator> ei = boost::edges(*map_graph);
-  std::pair<vertex_iterator, vertex_iterator> vi = boost::vertices(*map_graph);
-
-  std::map<int, std::shared_ptr<Room> > rooms;
-
-  double min_x = 1e10;
-  double max_x = 0;
-  double min_y = 1e10;
-  double max_y = 0;
-
-  for (vertex_iterator it = vi.first; it != vi.second; ++it) {
-    auto x = positions[*it][0];
-    auto y = positions[*it][1];
-    min_x = std::min(min_x, x);
-    min_y = std::min(min_y, y);
-    max_x = std::max(max_x, x);
-    max_y = std::max(max_y, y);
-  }
+  _libavoid_storage.clear();
 
   auto router = std::make_unique<Avoid::Router>(Avoid::OrthogonalRouting);
   router->setRoutingOption(Avoid::improveHyperedgeRoutesMovingAddingAndDeletingJunctions, true);
   router->setRoutingOption(Avoid::nudgeSharedPathsWithCommonEndPoint, false);
-
-  router->setRoutingPenalty(Avoid::crossingPenalty, 0);
+  router->setRoutingPenalty(Avoid::crossingPenalty, 10000);
   router->setRoutingPenalty(Avoid::fixedSharedPathPenalty, 0);
   router->setRoutingPenalty(Avoid::reverseDirectionPenalty, 100);
   router->setRoutingParameter(Avoid::shapeBufferDistance, 3);
-  //router->setRoutingPenalty(Avoid::anglePenalty, 0);
 
+  bool playerRoom = true;
+  int roomCount = 10;
+  std::vector<std::shared_ptr<Room>> rooms(roomCount, nullptr);
 
-  bool playerRoom = false;
-  for (vertex_iterator it = vi.first; it != vi.second; ++it) {
+  for (auto i : boost::irange(0, roomCount)) {
     int x, y;
+
+    auto w = world->rnd->getInt(4, 20);
+    auto h = world->rnd->getInt(4, w, w * 0.625);
 
     if (playerRoom) {
       x = world->currLevel->width / 2;
       y = world->currLevel->height / 2;
       playerRoom = false;
     } else {
-      x = maprange(positions[*it][0], min_x, max_x, 10, width - 10);
-      y = maprange(positions[*it][1], min_y, max_y, 10, height - 10);
+      x = world->rnd->getInt(w + 1, width - w);
+      y = world->rnd->getInt(h + 1, height - h);
     }
-
-    auto w = world->rnd->getInt(3, 20);
-    auto h = world->rnd->getInt(3, w, w*0.625);
     auto room = std::make_shared<Room>(Position(x, y), w, h);
 
-    bool found = false;
-    int count = 0;
-    do {
-      count++;
-      auto w = world->rnd->getInt(3, 20);
-      auto h = world->rnd->getInt(3, w, w*0.625);
-      auto room = std::make_shared<Room>(Position(x, y), w, h);
-      if (buildRoom(*room)) {
-        rooms.insert(std::pair<int, std::shared_ptr<Room> >(*it, room));
-        Avoid::Rectangle roomRect(Avoid::Point(x, y), w, h);
-        Avoid::ShapeRef *roomShape = new Avoid::ShapeRef(router.get(), roomRect);
-        found = true;
-      }
-    } while (!found && count < 100);
-    if(!found)
-      rooms.insert(std::pair<int, std::shared_ptr<Room> >(*it, nullptr));
+    if (buildRoom(*room)) {
+      rooms[i] = room;
+      Avoid::Rectangle roomRect(Avoid::Point(x, y), w, h);
+      Avoid::ShapeRef *roomShape = new Avoid::ShapeRef(router.get(), roomRect);
+    } else {
+      rooms[i] = nullptr;
+    }
   }
 
-  for (edge_iterator it = ei.first; it != ei.second; ++it) {
-    auto src = rooms[boost::source(*it, *map_graph)];
-    auto dest = rooms[boost::target(*it, *map_graph)];
-    if(!src || !dest)
-      continue;
+  for(auto i : boost::irange(0, 7)) {
+    int srcN, destN;
+    do {
+      srcN = world->rnd->getInt(0, roomCount-1);
+      destN = world->rnd->getInt(0, roomCount-1);
+    } while(srcN == destN || !rooms[srcN] || !rooms[destN]);
+
+    auto src = rooms[srcN];
+    auto dest = rooms[destN];
     Avoid::Point srcPt(src->center.x, src->center.y);
     Avoid::Point destPt(dest->center.x, dest->center.y);
     auto connRef = new Avoid::ConnRef(router.get(), srcPt, destPt);
     connRef->setCallback(&_libavoid_callback, connRef);
   }
+
   router->processTransaction();
 
   for(auto p : _libavoid_storage) {
