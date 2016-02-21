@@ -1,9 +1,9 @@
 #include "Map.hpp"
 #include "utils.h"
-#include "BSPMapGen.hpp"
+#include "MapGen.hpp"
 
 void Map::generateLevel() {
-  auto mapgen = BSPMapGen(world, width, height);
+  auto mapgen = MapGen(world, width, height);
   mapgen.init();
   mapgen.forAll([this](const Element e, const int x, const int y){
     switch(e) {

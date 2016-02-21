@@ -8,9 +8,12 @@
 #include "components.hpp"
 #include "world.hpp"
 #include <vector>
+#include <libavoid/libavoid.h>
 
 enum class Element { Empty, Floor, Wall, Rock, Door };
 enum class Direction {Up, Down, Left, Right, Count};
+using Edge = std::pair<Position, Position>;
+
 
 struct Room {
   Position center;
@@ -19,10 +22,14 @@ struct Room {
   Room(const Position center, const int width, const int height) : center(center), width(width), height(height) {}
 };
 
-struct MapGen {
+struct MapGen: public ITCODBspCallback {
   std::shared_ptr<World> world;
   int width, height;
   std::vector<std::vector<Element>> map;
+  Position prevPos{-1, -1};
+  std::vector<Edge> edges;
+  Avoid::Router router;
+
 
   Position findFree() {
     int x, y;
@@ -33,11 +40,16 @@ struct MapGen {
     return Position(x,y);
   }
 
-  MapGen(std::shared_ptr<World> world, const int width, const int height) : world(world), width(width), height(height) {
+  MapGen(std::shared_ptr<World> world, const int width, const int height):  world(world), width(width), height(height), edges(), router(Avoid::OrthogonalRouting) {
     map.resize(width, std::vector<Element>(height, Element::Rock));
+    router.setRoutingOption(Avoid::improveHyperedgeRoutesMovingAddingAndDeletingJunctions, true);
+    router.setRoutingOption(Avoid::nudgeSharedPathsWithCommonEndPoint, false);
+    router.setRoutingPenalty(Avoid::crossingPenalty, 10000);
+    router.setRoutingPenalty(Avoid::fixedSharedPathPenalty, 0);
+    router.setRoutingPenalty(Avoid::reverseDirectionPenalty, 100);
+    router.setRoutingParameter(Avoid::shapeBufferDistance, 1);
   }
 
-  virtual void init() = 0;
 
   template<typename F>
   void forAll(F function) {
@@ -54,7 +66,11 @@ struct MapGen {
                    int bottomMost,
                    Element fill, bool squash=false);
 
-  bool rectFill(const Position &center, const int width, const int height, const Element fill, const bool squash=false);
+  bool rectFill(const Position &center,
+                const int width,
+                const int height,
+                const Element fill,
+                const bool squash=false);
 
   bool rectFill(const int leftMostIn,
                 const int rightMostIn,
@@ -74,6 +90,10 @@ struct MapGen {
     auto room = Room(center, width, height);
     return buildRoom(room, squash);
   }
+
+  void init();
+
+  bool visitNode(TCODBsp *node, void *userData) override ;
 };
 
 
