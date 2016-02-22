@@ -8,7 +8,6 @@
 #include "components.hpp"
 #include "world.hpp"
 #include <vector>
-#include <libavoid/libavoid.h>
 
 enum class Element { Empty, Floor, Rock, Door };
 using Edge = std::pair<Position, Position>;
@@ -19,29 +18,21 @@ struct MapGen: public ITCODBspCallback {
   std::vector<std::vector<Element>> map;
   Position prevPos{-1, -1};
   std::vector<Edge> edges;
-  Avoid::Router router;
 
-  const int MaxDepth = 15;
+  const int MaxDepth = 8;
   const int BSPsizeH = 10;
   const int BSPsizeV = 10;
   const float BSPmaxHRatio = 1.5f;
   const float BSPmaxWRatio = 1.5f;
   const int BSPEdgeBuffer = 10;
-  const int minRegionW = 2;
-  const int minRegionH = 2;
-  const int RegionBuffer = 0;
+  const int minRegionW = 10;
+  const int minRegionH = 10;
+  const int RegionBuffer = 5;
 
   MapGen(std::shared_ptr<World> world, const int width, const int height)
-      : world(world), width(width), height(height), edges(), router(Avoid::OrthogonalRouting) {
+      : world(world), width(width), height(height), edges() {
 
     map.resize(width, std::vector<Element>(height, Element::Rock));
-
-    router.setRoutingOption(Avoid::improveHyperedgeRoutesMovingAddingAndDeletingJunctions, true);
-    router.setRoutingOption(Avoid::nudgeSharedPathsWithCommonEndPoint, false);
-    router.setRoutingPenalty(Avoid::crossingPenalty, 10000);
-    router.setRoutingPenalty(Avoid::fixedSharedPathPenalty, 0);
-    router.setRoutingPenalty(Avoid::reverseDirectionPenalty, 100);
-    router.setRoutingParameter(Avoid::shapeBufferDistance, 1);
   }
 
   void generate();

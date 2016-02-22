@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 project (Journey VERSION 0.0.1 LANGUAGES CXX)
 include(ExternalProject)
 
-set(CMAKE_BUILD_TYPE RELEASE)
+set(CMAKE_BUILD_TYPE DEBUG)
 
 set(CMAKE_CXX_FLAGS " -pedantic -Werror -Wall -Wextra -Wno-error=gnu-case-range -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++11 -std=c++1y")
 set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -DRELEASE")
-set(CMAKE_CXX_FLAGS_DEBUG    "-O0")
+set(CMAKE_CXX_FLAGS_DEBUG    "-g -O0")
 
 set(entityx_DIR "${Journey_SOURCE_DIR}/vendor/entityx")
 set(entityx_LIBRARY "${entityx_DIR}/lib/libentityx.a")

@@ -6,37 +6,42 @@
 #include <boost/range/irange.hpp>
 #include "utils.h"
 
-std::vector<Position> _BSP_libavoid_storage;
-void _BSP_libavoid_callback(void *ptr) {
-  Avoid::ConnRef *connRef = (Avoid::ConnRef *) ptr;
-  const Avoid::PolyLine &route = connRef->route();
-  for (auto i = 0; i < route.ps.size() - 1; ++i) {
-    int x = int(route.ps[i].x);
-    int y = int(route.ps[i].y);
-    TCODLine::init(x, y, int(route.ps[i + 1].x), int(route.ps[i + 1].y));
-    do {
-      _BSP_libavoid_storage.emplace_back(x, y);
-    } while (!TCODLine::step(&x, &y));
-  }
-}
-
 void MapGen::generate() {
-  _BSP_libavoid_storage.clear();
   auto BSP = std::__1::make_unique<TCODBsp>(BSPEdgeBuffer, BSPEdgeBuffer, width - BSPEdgeBuffer, height - BSPEdgeBuffer);
   BSP->splitRecursive(world->rnd, MaxDepth, BSPsizeH, BSPsizeV, BSPmaxHRatio, BSPmaxWRatio);
+  //BSP->traverseInvertedLevelOrder(this, NULL);
   BSP->traverseInOrder(this, NULL);
-  for (auto edge : edges) {
-    auto srcP = edge.first;
-    auto destP = edge.second;
-    Avoid::Point srcPt(srcP.x, srcP.y);
-    Avoid::Point destPt(destP.x, destP.y);
-    auto connRef = new Avoid::ConnRef(&router, srcPt, destPt);
-    connRef->setCallback(&_BSP_libavoid_callback, connRef);
+
+  auto corridor = [&](int sx, int sy, int tx, int ty) {
+    sx = clamp(sx, 1, width-2);
+    sy = clamp(sy, 1, width-2);
+    tx = clamp(tx, 1, height-2);
+    ty = clamp(ty, 1, height-2);
+    int x = sx;
+    int y = sy;
+
+    auto step = [&](int &var, const int target, int stepSize) {
+      map[x][y] = Element::Floor;
+      var+=sgn(target-var)*stepSize;
+      return var!=target;
+    };
+
+    switch(world->rnd->getInt(0, 1)) {
+      case 0:
+        while (step(x, tx, 1));
+        while (step(y, ty, 1));
+        break;
+      case 1:
+        while (step(y, ty, 1));
+        while (step(x, tx, 1));
+        break;
+    }
+  };
+
+  for(auto edge : edges) {
+    corridor(edge.first.x, edge.first.y, edge.second.x, edge.second.y);
   }
-  router.processTransaction();
-  for (auto p : _BSP_libavoid_storage) {
-    map[clamp(p.x, 1, width - 2)][clamp(p.y, 1, width - 2)] = Element::Floor;
-  }
+
   world->currLevel->playerStart = findFree();
 }
 
@@ -48,8 +53,6 @@ bool MapGen::visitNode(TCODBsp *node, void *userData) {
     auto y = world->rnd->getInt(node->y - 1, node->y + node->h - h - 1);
     auto regionBuilt = buildRegion(x, y, w, h, false);
     if (regionBuilt) {
-      Avoid::Rectangle regionRect(Avoid::Point(x, y), w + 1, h + 1);
-      Avoid::ShapeRef *regionShape = new Avoid::ShapeRef(&router, regionRect);
       if (prevPos.x != -1) {
         edges.emplace_back(prevPos, Position(x, y));
       }
