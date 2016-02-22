@@ -14,7 +14,7 @@ void World::generateMap() {
 
 void World::setupPlayer() {
   player = ECS.entities.create();
-  player.assign<Position>(currLevel->width/2, currLevel->height/2);
+  player.assign<Position>(currLevel->playerStart);
   player.assign<Health>(1000);
   player.assign<Obstruction>();
   player.assign<Render>('@');

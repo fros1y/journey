@@ -9,40 +9,42 @@
 #include "world.hpp"
 #include <vector>
 
-enum class Element { Empty, Hall, Room, Floor, Wall, Rock };
-enum class Direction {None, Up, Down, Left, Right, Count};
+enum class Element { Empty, Floor, Rock, Door };
+using Edge = std::pair<Position, Position>;
 
-struct Room {
-  Position center;
-  int width;
-  int height;
-  Room(const Position center, const int width, const int height) : center(center), width(width), height(height) {}
-};
-
-struct Corridor {
-  int firstRoom;
-  int secondRoom;
-  Corridor(const int firstRoom, const int secondRoom) : firstRoom(firstRoom), secondRoom(secondRoom) {}
-};
-
-
-
-
-struct MapGen {
+struct MapGen: public ITCODBspCallback {
   std::shared_ptr<World> world;
   int width, height;
   std::vector<std::vector<Element>> map;
+  Position prevPos{-1, -1};
+  std::vector<Edge> edges;
 
-  MapGen(std::shared_ptr<World> world, const int width, const int height) : world(world), width(width), height(height) {
+  const int MaxDepth = 8;
+  const int BSPsizeH = 10;
+  const int BSPsizeV = 10;
+  const float BSPmaxHRatio = 1.5f;
+  const float BSPmaxWRatio = 1.5f;
+  const int BSPEdgeBuffer = 10;
+  const int minRegionW = 10;
+  const int minRegionH = 10;
+  const int RegionBuffer = 5;
+
+  MapGen(std::shared_ptr<World> world, const int width, const int height)
+      : world(world), width(width), height(height), edges() {
+
     map.resize(width, std::vector<Element>(height, Element::Rock));
   }
 
-  void init() {}
+  void generate();
+  bool visitNode(TCODBsp *node, void *userData) override;
+  bool buildRegion(const int x, const int y, int width, int height, bool squash = false);
+
+  Position findFree();
 
   template<typename F>
   void forAll(F function) {
-    for(auto i = 0; i < width; i++) {
-      for(auto j = 0; j < height; j++) {
+    for (auto i = 0; i < width; i++) {
+      for (auto j = 0; j < height; j++) {
         function(map[i][j], i, j);
       }
     }
@@ -52,30 +54,20 @@ struct MapGen {
                    int rightMost,
                    int topMost,
                    int bottomMost,
-                   Element fill, bool squash=false);
-
-  bool rectFill(const Position &center, const int width, const int height, const Element fill, const bool squash=false);
+                   Element fill, bool squash = false);
 
   bool rectFill(const int leftMostIn,
                 const int rightMostIn,
                 const int topMostIn,
                 const int bottomMostIn,
-                const Element fill, const bool squash);
+                const Element fill,
+                const bool squash = false);
 
   void floodFill(const int x, const int y, const Element fill);
 
-  bool buildRoom(const int x, const int y, int width, int height, bool squash=false) {
-    return buildRoom(Position(x, y), width, height, squash);
-  }
 
-  bool buildRoom(const Room& r, bool squash=false);
 
-  bool buildRoom(const Position& center, int width, int height, bool squash=false) {
-    auto room = Room(center, width, height);
-    return buildRoom(room, squash);
-  }
 
-  bool buildCorridor(const Room& r1, const Room& r2);
 };
 
 

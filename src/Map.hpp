@@ -22,6 +22,8 @@ struct Map {
   std::shared_ptr<DjikstraMap> d_map;
   std::shared_ptr<LightMap> l_map;
 
+  Position playerStart;
+
 //  std::unordered_multimap<Position, std::shared_ptr< entityx::Entity > > entities;
 
 //  std::vector<entityx::Entity> tiles;
@@ -42,6 +44,7 @@ struct Map {
   }
 
   void makeBlock(int x, int y);
+  void makeDoor(int x, int y);
   void makeFloor(int x, int y);
   void makeLightSource(int x, int y, float brightness = 1, TCODColor color = TCODColor::yellow);
 
