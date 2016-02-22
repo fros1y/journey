@@ -4,11 +4,10 @@
 
 void Map::generateLevel() {
   auto mapgen = MapGen(world, width, height);
-  mapgen.init();
+  mapgen.generate();
   mapgen.forAll([this](const Element e, const int x, const int y){
     switch(e) {
       case Element::Rock:
-      case Element::Wall:
         makeBlock(x, y);
         break;
       case Element::Floor:
